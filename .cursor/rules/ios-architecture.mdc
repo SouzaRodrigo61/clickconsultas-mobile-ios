@@ -1,0 +1,266 @@
+
+# Arquitetura do ClickConsultas Mobile iOS
+
+## Visão Geral
+O ClickConsultas Mobile iOS é um aplicativo construído com SwiftUI e The Composable Architecture (TCA), com toda a lógica de negócio implementada em Swift. Este documento descreve o padrão de arquitetura utilizado, os princípios de design e como novas features devem ser criadas.
+
+## Tecnologias Principais
+- **SwiftUI**: Framework declarativo da Apple para construção de interfaces de usuário
+- **The Composable Architecture (TCA)**: Biblioteca para gerenciamento de estado e fluxo de dados unidirecional
+- **Swift**: Linguagem principal para toda a lógica de negócio
+- **Tuist**: Ferramenta para gerenciamento de projetos e geração de código
+
+## Estrutura de Módulos
+
+### Módulo Shared (Swift)
+
+O módulo `Shared` contém todo o código compartilhado entre as features do aplicativo:
+
+```
+Shared/
+  ├── Domain/
+  │   ├── Models/                 # Modelos de domínio (fonte da verdade)
+  │   ├── UseCases/              # Casos de uso (regras de negócio)
+  │   ├── Repositories/          # Interfaces de repositório
+  │   └── Errors/                # Erros de domínio
+  ├── Data/
+  │   ├── Repositories/          # Implementações de repositório
+  │   ├── Sources/               # Fontes de dados (APIs, bancos de dados)
+  │   └── Mappers/               # Mapeadores de dados
+  └── Utils/                     # Utilitários compartilhados
+```
+
+Todas as regras de negócio são implementadas no módulo Shared, dentro do pacote `Domain/UseCases`, garantindo que a lógica seja consistente e reutilizável. Os modelos de domínio definidos aqui são a fonte da verdade para os dados.
+
+### Módulos Específicos do iOS
+
+Cada feature no aplicativo iOS é organizada como um módulo independente seguindo os princípios da TCA. As features consomem as regras de negócio do módulo `Shared`, operando sobre modelos de dados Swift.
+
+### Arquivos por Feature (Exemplo)
+1. **Feature.swift**: Define o namespace da feature como um enum
+2. **FeatureController.swift**: Implementa o reducer da TCA com State, Action, usando modelos Swift e integrando com casos de uso através de dependências (DependencyClient).
+3. **FeatureView.swift**: Componentes de UI da feature utilizando SwiftUI, operando sobre os modelos Swift.
+4. **(Opcional) FeatureModel.swift**: Se necessário, define modelos Swift específicos para a *view* (ViewModels) dentro da feature.
+
+### Organização de Código
+
+```
+clickconsultas-mobile-ios/
+  ├── App/                       # Entry point da aplicação
+  ├── Shared/                    # Módulo compartilhado Swift
+  │   ├── Domain/                # Camada de domínio
+  │   │   ├── Models/            # Modelos de domínio
+  │   │   ├── UseCases/          # Casos de uso
+  │   │   ├── Repositories/      # Interfaces de repositório
+  │   │   └── Errors/            # Erros de domínio
+  │   ├── Data/                  # Camada de dados
+  │   │   ├── Repositories/      # Implementações
+  │   │   ├── Sources/           # Fontes de dados
+  │   │   └── Mappers/           # Mapeadores
+  │   └── Utils/                 # Utilitários
+  └── Modules/                   # Módulos de features
+      └── FeatureName/           # Módulo de uma feature específica
+          ├── FeatureName.swift
+          ├── FeatureNameController.swift
+          ├── FeatureNameView.swift
+          └── Components/
+              └── FeatureNameComponents.swift # Componentes de UI específicos da feature
+```
+
+## Padrões de Design
+
+### Separação de Responsabilidades
+
+1. **Módulo Shared (Swift)**:
+   - Contém modelos de domínio (fonte da verdade)
+   - Define interfaces de repositório
+   - Implementa casos de uso (regras de negócio)
+   - Implementa lógica de repositório
+   - Gerencia fontes de dados remotas (API) e locais (banco de dados)
+
+2. **Módulo iOS (Features - `Modules/FeatureName/`)**:
+   - Implementa a interface do usuário com SwiftUI.
+   - Gerencia o estado da UI e navegação com TCA, utilizando os modelos Swift definidos no `Shared/Domain/`.
+   - Consome as funcionalidades expostas pelos `@DependencyClient` para buscar e manipular dados.
+   - Implementa funcionalidades específicas da plataforma iOS não relacionadas diretamente aos dados.
+
+### The Composable Architecture (TCA)
+
+A TCA é baseada em uma arquitetura unidirecional com os seguintes componentes:
+
+1. **State**: Representa o estado completo da feature
+2. **Action**: Eventos que podem ocorrer na feature
+3. **Reducer**: Função pura que define como o estado muda em resposta a ações e integra os casos de uso
+4. **Store**: Contém o runtime que conecta state, action e reducer com a UI
+
+### Navegação (SwiftUI + TCA)
+
+A navegação no ClickConsultas Mobile iOS segue os padrões recomendados pelo TCA, utilizando recursos nativos do SwiftUI com a camada de estado gerenciada pelo TCA:
+
+#### 1. Tipos de Navegação Suportados
+
+1. **Stack Navigation (@Presents e NavigationStack)**
+   - Utiliza o modificador `@Presents` para gerenciar o estado de apresentação
+   - Integra-se com o `NavigationStack` do SwiftUI
+   - Exemplo:
+   ```swift
+   @Reducer
+   struct Feature {
+     @ObservableState
+     struct State {
+       @Presents var destination: Destination.State?
+     }
+     // ...
+   
+     @Reducer
+     enum Destination {
+       case detail(DetailFeature)
+       // ...
+     }
+   }
+   ```
+
+2. **Navegação com Abas (TabView)**
+   - Utiliza `TabView` com estado gerenciado pelo TCA
+   - Cada aba possui seu próprio reducer independente
+   - Combinados usando o operador `Scope` ou `Reduce`
+
+3. **Apresentação Modal (@Presents e sheet/fullScreenCover)**
+   - Controle de sheets e apresentações modais via `@Presents`
+   - Suporta múltiplas apresentações aninhadas
+   - Exemplo:
+   ```swift
+   WithPerceptionTracking {
+     if let destination = store.scope(state: \.destination, action: \.destination) {
+       switch destination.state {
+       case .profile:
+         sheet(store: destination) { ProfileView(store: $0) }
+       }
+     }
+   }
+   ```
+
+4. **Navegação por URL e Deep Links**
+   - Suporte para `Path` e deep links através de mapeamento de URLs para ações
+   - Utiliza o pattern de coordenador para gerenciar fluxos complexos
+
+#### 2. Transições e Animações
+
+1. **Transições Nativas do SwiftUI**
+   - `.transition(.slide)`, `.transition(.move(edge: .trailing))`
+   - `.transition(.asymmetric(insertion: .scale, removal: .opacity))`
+   - Uso com `withAnimation` para controlar timing e curvas
+   
+   ```swift
+   WithPerceptionTracking {
+     if store.isShowingDetail {
+       DetailView(store: store.scope(/*...*/))
+         .transition(.move(edge: .trailing))
+     }
+   }
+   .animation(.spring(duration: 0.3), value: store.isShowingDetail)
+   ```
+
+2. **Animações Personalizadas**
+   - Baseadas em `ViewModifier` e `AnimatableModifier`
+   - Interpolação de valores via `animatableData`
+   - Hero transitions customizadas usando `.matchedGeometryEffect`
+
+3. **Integração com UIKit via UIViewControllerRepresentable**
+   - Custom transitions usando `UIViewControllerAnimatedTransitioning`
+   - `CATransition` para efeitos avançados (cube, flip)
+   - Exemplo:
+   ```swift
+   extension AnyTransition {
+     static var customPush: AnyTransition {
+       AnyTransition.modifier(
+         active: CustomPushTransition(progress: 1),
+         identity: CustomPushTransition(progress: 0)
+       )
+     }
+   }
+   ```
+
+4. **Hero Animations**
+   - Transições fluidas entre views com elementos compartilhados
+   - Implementado via namespace com `matchedGeometryEffect`
+   ```swift
+   @Namespace private var namespace
+   
+   // Na view de origem
+   Image(item.image)
+     .matchedGeometryEffect(id: item.id, in: namespace)
+   
+   // Na view de destino
+   Image(item.image)
+     .matchedGeometryEffect(id: item.id, in: namespace)
+   ```
+
+#### 3. Boas Práticas de Navegação
+
+1. **Separação de Estado de Navegação**
+   - Mantenha o estado de navegação separado do estado de domínio
+   - Use `@Presents` ou `enum` com `Optional<PresentedState>`
+
+2. **Coordenação de Fluxos**
+   - Features de alto nível coordenam fluxos complexos
+   - Implementação de Coordenadores quando necessário
+
+3. **Cancelamento de Efeitos na Desmontagem**
+   - Sempre cancele efeitos pendentes quando uma view for desmontada
+   - Use `onDisappear` ou `.cancelID` no TCA
+
+4. **Testes de Navegação**
+   - Teste fluxos de navegação verificando o estado de navegação
+   - Use TestStore para simular ações que desencadeiam navegação
+
+### Fluxo de Dados
+
+```
+User Action → Store → Reducer → DependencyClient → Swift Use Cases → Swift Repository → [Swift Data] → State Update → View Update
+```
+
+### Princípios
+
+1. **Unidirecional**: Fluxo de dados em uma única direção
+2. **Composable**: Features podem ser compostas para formar features maiores
+3. **Testável**: Lógica de negócio isolada e testável
+4. **Independente de UI**: Lógica não depende da camada de visualização
+5. **Reutilização de Código**: Regras de negócio compartilhadas via módulo Shared
+6. **Separação de Responsabilidades**: Cada camada tem responsabilidades bem definidas
+
+## Criação de Novas Features
+
+Para criar uma nova feature, siga estes passos:
+
+1. Certifique-se de que os casos de uso e modelos de domínio estão implementados no módulo Shared.
+2. **Definir/Atualizar Dependências:** No módulo `Shared/`:
+   a. Defina ou atualize a interface do `@DependencyClient` para incluir as operações necessárias.
+   b. Defina os modelos Swift correspondentes em `Domain/Models/`.
+   c. Implemente os casos de uso em `Domain/UseCases/`.
+   d. Implemente os repositórios em `Data/Repositories/`.
+3. Utilize o template Tuist para criar um novo módulo de feature iOS:
+   ```
+   tuist scaffold Module --name FeatureName
+   ```
+4. Implemente o `Reducer` da feature (`FeatureNameController.swift`), injetando a dependência (`@Dependency(\.domainClient)`) e utilizando os modelos Swift.
+5. Implemente a UI (`FeatureNameView.swift`) utilizando SwiftUI e os componentes da TCA, operando sobre os modelos Swift.
+6. Adicione testes unitários para o reducer e, se aplicável, para a UI.
+
+Este comando gerará automaticamente a estrutura de arquivos necessária conforme o padrão definido.
+
+## Convenções de Código
+
+1. Use extension no enum da feature para organizar componentes relacionados.
+2. Siga o padrão Observable State da TCA para estado reativo.
+3. Mantenha reducers pequenos e focados em uma única responsabilidade.
+4. Use Effects para operações assíncronas e efeitos colaterais.
+5. Mantenha todas as regras de negócio no módulo Shared.
+6. Siga os princípios SOLID para organização do código.
+7. Use Dependency Injection para injeção de dependências.
+8. Implemente testes unitários para toda a lógica de negócio.
+2. Siga o padrão Observable State da TCA para estado reativo
+3. Mantenha reducers pequenos e focados em uma única responsabilidade
+4. Use Effects para operações assíncronas e efeitos colaterais
+5. Crie adaptadores claros entre o código KMP e o código Swift
+6. Mantenha todas as regras de negócio no módulo shared de KMP
