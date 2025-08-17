@@ -39,12 +39,25 @@ let project = Project(
                 .package(product: "SwiftUIIntrospect")
             ],
             settings: .settings(
-                base: [:],
-                configurations: [
-                    .debug(name: "Debug"),
-                    .release(name: "Release")
+                base: [
+                    "FRAMEWORK_SEARCH_PATHS": "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+                    "IPHONEOS_DEPLOYMENT_TARGET": "18.0",
+                    "DEVELOPMENT_TEAM": "Z42V6W967K",
+                    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+                    "MARKETING_VERSION": "1.0.0",
+                    "CURRENT_PROJECT_VERSION": "1",
                 ],
-                defaultSettings: .recommended
+                configurations: [
+                    .debug(name: "Debug", settings: [
+                        "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+                        "GCC_GENERATE_DEBUGGING_SYMBOLS": "YES",
+                        "SWIFT_OPTIMIZATION_LEVEL": "-Onone"
+                    ]),
+                    .release(name: "Release", settings: [
+                        "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+                        "GCC_GENERATE_DEBUGGING_SYMBOLS": "YES"
+                    ])
+                ]
             ),
             additionalFiles: []
         ),
