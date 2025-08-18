@@ -28,7 +28,7 @@ let project = Project(
                     "CFBundleLocalizations": ["pt-BR"],
                 ]
             ),
-            sources: ["App/Sources/**", "Modules/**"],
+            sources: ["App/Sources/**", "Modules/**", "Shared/**", "Design/**"],
             resources: ["App/Resources/**"],
             dependencies: [
                 .package(product: "ComposableArchitecture"),
@@ -70,22 +70,10 @@ let project = Project(
             destinations: .iOS,
             product: .unitTests,
             bundleId: "io.tuist.clickconsultas-mobile-iosTests",
-            infoPlist: .default,
-            sources: ["App/Tests/**"],
+            sources: ["App/Tests/**", "Tests/**"],
             resources: [],
             dependencies: [.target(name: "clickconsultas-mobile-ios")]
         ),
     ],
-    schemes: [
-        .scheme(
-            name: "clickconsultas-mobile-ios",
-            shared: true,
-            buildAction: .buildAction(targets: ["clickconsultas-mobile-ios"]),
-            testAction: .targets(["clickconsultas-mobile-iosTests"]),
-            runAction: .runAction(configuration: "Debug"),
-            archiveAction: .archiveAction(configuration: "Release"),
-            profileAction: .profileAction(configuration: "Release"),
-            analyzeAction: .analyzeAction(configuration: "Debug")
-        )
-    ]
+    schemes: []
 )
