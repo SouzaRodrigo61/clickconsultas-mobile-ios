@@ -23,6 +23,9 @@ let project = Project(
                         "UIColorName": "",
                         "UIImageName": "",
                     ],
+                    "UIUserInterfaceStyle": "Light",
+                    "CFBundleDevelopmentRegion": "pt-BR",
+                    "CFBundleLocalizations": ["pt-BR"],
                 ]
             ),
             sources: ["App/Sources/**", "Modules/**"],
@@ -46,6 +49,7 @@ let project = Project(
                     "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
                     "MARKETING_VERSION": "1.0.0",
                     "CURRENT_PROJECT_VERSION": "1",
+                    "DEVELOPMENT_LANGUAGE": "pt-BR",
                 ],
                 configurations: [
                     .debug(name: "Debug", settings: [
