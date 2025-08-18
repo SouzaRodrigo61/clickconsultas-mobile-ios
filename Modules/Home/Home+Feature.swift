@@ -1,5 +1,5 @@
 //
-//  Authentication+Feature.swift
+//  Home+Feature.swift
 //  ClickConsultasMobileIOS
 //
 //  Created by Rodrigo Souza on 17/08/2025.
@@ -8,7 +8,7 @@
 import ComposableArchitecture
 import SwiftUI
 
-extension Authentication {
+extension Home {
     @Reducer
     struct Feature {
         @ObservableState

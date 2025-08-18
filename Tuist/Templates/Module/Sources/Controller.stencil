@@ -6,7 +6,7 @@
 //
 
 import ComposableArchitecture
-import Shared
+import SwiftUI
 
 extension {{ name }} {
     @Reducer
