@@ -1,0 +1,26 @@
+//
+//  {{ name }}+View.swift
+//  {{ projectName }}
+//
+//  Created by {{ author }} on {{ date }}.
+//
+
+import ComposableArchitecture
+import SwiftUI
+
+extension {{ name }} {
+    struct ContentView: View {
+        @Bindable var store: StoreOf<Feature>
+        
+        var body: some View {
+            VStack {
+                Text("{{ name }} Module")
+                    .font(.title)
+            }
+            .padding()
+            .onAppear {
+                store.send(.onAppear)
+            }
+        }
+    }
+} 

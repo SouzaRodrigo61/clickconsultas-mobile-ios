@@ -1,0 +1,32 @@
+//
+//  {{ name }}+Feature.swift
+//  {{ projectName }}
+//
+//  Created by {{ author }} on {{ date }}.
+//
+
+import ComposableArchitecture
+import Shared
+
+extension {{ name }} {
+    @Reducer
+    struct Feature {
+        @ObservableState
+        struct State: Equatable {
+            // Estado do módulo
+        }
+        
+        enum Action: Equatable {
+            case onAppear
+        }
+        
+        var body: some ReducerOf<Self> {
+            Reduce { state, action in
+                switch action {
+                case .onAppear:
+                    return .none
+                }
+            }
+        }
+    }
+} 

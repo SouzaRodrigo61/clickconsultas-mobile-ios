@@ -1,0 +1,8 @@
+//
+//  {{ name }}.swift
+//  {{ projectName }}
+//
+//  Created by {{ author }} on {{ date }}.
+//
+
+enum {{ name }} { }
