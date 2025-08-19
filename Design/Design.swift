@@ -6,5 +6,18 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum Design { }
+
+// MARK: - Design System Extensions
+extension Design {
+    /// Componentes de Input no padrão Revolut
+//    typealias InputComponents = Input
+    
+    /// Componentes de Botão
+    typealias ButtonComponents = Button
+    
+    /// Componentes de Card
+    typealias CardComponents = Card
+}
