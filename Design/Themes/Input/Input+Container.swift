@@ -13,12 +13,21 @@ extension Input {
     struct Container: View { 
         let content: AnyView
         let verticalPadding: CGFloat
+        let isFocused: Bool
+        let backgroundColor: Color
+        let shinyColor: Color
         
         init(
             verticalPadding: CGFloat = 14,
+            isFocused: Bool = false,
+            backgroundColor: Color = Color(.systemGray5),
+            shinyColor: Color = Color.blue.opacity(0.03),
             @ViewBuilder content: () -> some View
         ) {
             self.verticalPadding = verticalPadding
+            self.isFocused = isFocused
+            self.backgroundColor = backgroundColor
+            self.shinyColor = shinyColor
             self.content = AnyView(content())
         }
         
@@ -28,8 +37,40 @@ extension Input {
                 .padding(.vertical, verticalPadding)
                 .background { 
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemGray6))
+                        .fill(
+                            isFocused ? 
+                            LinearGradient(
+                                colors: [
+                                    backgroundColor,
+                                    backgroundColor.opacity(0.55),
+                                    backgroundColor
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [backgroundColor],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .overlay {
+                            if isFocused {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(
+                                        RadialGradient(
+                                            colors: [
+                                                shinyColor,
+                                            ],
+                                            center: .center,
+                                            startRadius: 0,
+                                            endRadius: 100
+                                        )
+                                    )
+                            }
+                        }
                 }
+                .animation(.easeIn(duration: 0.1), value: isFocused)
         }
     }
 }
@@ -216,7 +257,7 @@ extension Input {
                     Text(placeholder)
                         .font(.system(size: isActive ? 12 : 18, weight: .regular))
                         .foregroundColor(Color(.systemGray2))
-                        .offset(y: isActive ? -8 : 0)
+                        .offset(y: isActive ? -12 : 0)
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -265,9 +306,16 @@ extension Input.Container {
         font: Font = .system(size: 18),
         textColor: Color = .primary,
         cursorColor: Color = .blue,
+        backgroundColor: Color = Color(.systemGray5),
+        shinyColor: Color = Color.blue.opacity(0.03),
         verticalPadding: CGFloat = 14
     ) -> Input.Container {
-        Input.Container(verticalPadding: verticalPadding) {
+        Input.Container(
+            verticalPadding: verticalPadding,
+            isFocused: isFocused.wrappedValue,
+            backgroundColor: backgroundColor,
+            shinyColor: shinyColor
+        ) {
             Input.Field(
                 placeholder: placeholder,
                 prefix: prefix,
@@ -294,10 +342,17 @@ extension Input.Container {
         font: Font = .system(size: 18),
         textColor: Color = .primary,
         cursorColor: Color = .blue,
+        backgroundColor: Color = Color(.systemGray5),
+        shinyColor: Color = Color.blue.opacity(0.03),
         titleSpacing: CGFloat = 8,
         verticalPadding: CGFloat = 14
     ) -> Input.Container {
-        Input.Container(verticalPadding: verticalPadding) {
+        Input.Container(
+            verticalPadding: verticalPadding,
+            isFocused: isFocused.wrappedValue,
+            backgroundColor: backgroundColor,
+            shinyColor: shinyColor
+        ) {
             Input.WithTitle(
                 title: title,
                 spacing: titleSpacing,
@@ -428,9 +483,16 @@ extension Input.Container {
         font: Font = .system(size: 18),
         textColor: Color = .primary,
         cursorColor: Color = .blue,
+        backgroundColor: Color = Color(.systemGray5),
+        shinyColor: Color = Color.blue.opacity(0.03),
         verticalPadding: CGFloat = 8
     ) -> Input.Container {
-        Input.Container(verticalPadding: verticalPadding) {
+        Input.Container(
+            verticalPadding: verticalPadding,
+            isFocused: isFocused.wrappedValue,
+            backgroundColor: backgroundColor,
+            shinyColor: shinyColor
+        ) {
             Input.Animated(
                 placeholder: placeholder,
                 prefix: prefix,
@@ -447,7 +509,7 @@ extension Input.Container {
 }
 
 // MARK: - Preview
-#Preview {
+#Preview { 
     struct PreviewView: View {
         @State var text1 = ""
         @State var text2 = ""
@@ -461,7 +523,7 @@ extension Input.Container {
         @FocusState var isFocused4: Bool
         @FocusState var isFocused5: Bool
         
-        var body: some View {
+        var body: some View { 
             ScrollView {
                 VStack(spacing: 20) {
                     Group {
@@ -555,18 +617,20 @@ extension Input.Container {
                     }
                     
                     Group {
-                        Text("7. Animado (placeholder vira título)")
+                        Text("7. Customizado (background e shiny)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
+                        
                         Input.Container.animated(
-                            placeholder: "Nome completo",
+                            placeholder: "Shine on!",
                             text: $text2,
                             isFocused: $isFocused2,
                             showClearButton: true,
-                            font: .system(size: 18),
-                            textColor: .primary,
-                            cursorColor: .blue
+                            font: .system(size: 20, weight: .thin),
+                            backgroundColor: .purple.opacity(0.1),
+                            shinyColor: .yellow.opacity(0.2),
+                            verticalPadding: 14
                         )
                     }
                     
