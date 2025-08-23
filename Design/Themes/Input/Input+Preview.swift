@@ -32,6 +32,10 @@ import SwiftUI
                         Input.Field(
                             placeholder: "Digite seu email",
                             showClearButton: true,
+                            keyboardType: .emailAddress,
+                            returnKeyType: .next,
+                            autocorrectionDisabled: true,
+                            autocapitalization: .never,
                             text: $fieldText
                         )
                     }
@@ -46,6 +50,13 @@ import SwiftUI
                             title: "Email",
                             placeholder: "Digite seu email",
                             showClearButton: true,
+                            font: .system(size: 16, weight: .medium),
+                            textColor: .primary,
+                            cursorColor: .blue,
+                            keyboardType: .emailAddress,
+                            returnKeyType: .next,
+                            autocorrectionDisabled: true,
+                            autocapitalization: .never,
                             text: $titleText
                         )
                     }
@@ -59,6 +70,15 @@ import SwiftUI
                         Input.Placeholder(
                             placeholder: "Digite seu email",
                             showClearButton: true,
+                            font: .system(size: 18, weight: .medium),
+                            textColor: .purple,
+                            cursorColor: .purple,
+                            keyboardType: .emailAddress,
+                            returnKeyType: .done,
+                            autocorrectionDisabled: true,
+                            autocapitalization: .never,
+                            backgroundColor: .purple.opacity(0.1),
+                            shinyColor: .purple.opacity(0.05),
                             text: $placeholderText
                         )
                     }

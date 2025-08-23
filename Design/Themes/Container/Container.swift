@@ -18,10 +18,10 @@ extension Container {
         let cornerRadius: CGFloat
 
         init(
-            @ViewBuilder content: @escaping () -> Content, 
             padding: CGFloat = 16,
             color: Color = Color(.inputContainer).opacity(0.12),
-            cornerRadius: CGFloat = 16
+            cornerRadius: CGFloat = 16,
+            @ViewBuilder content: @escaping () -> Content
         ) {
             self.content = content()
             self.padding = padding

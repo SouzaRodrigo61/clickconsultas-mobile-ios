@@ -38,24 +38,70 @@ extension Input {
     struct Field: View {
         let placeholder: String
         let showClearButton: Bool
+        let font: Font
+        let textColor: Color
+        let cursorColor: Color
+        let keyboardType: UIKeyboardType
+        let returnKeyType: SubmitLabel
+        let autocorrectionDisabled: Bool
+        let autocapitalization: TextInputAutocapitalization
+        let onSubmit: (() -> Void)?
+        let backgroundColor: Color
+        let shinyColor: Color
+        let verticalPadding: CGFloat
+        
         @Binding var text: String
         
         init(
             placeholder: String,
             showClearButton: Bool = false,
+            font: Font = .system(size: 15, weight: .medium),
+            textColor: Color = .inputContainerTextFieldFill,
+            cursorColor: Color = .blue,
+            keyboardType: UIKeyboardType = .default,
+            returnKeyType: SubmitLabel = .done,
+            autocorrectionDisabled: Bool = false,
+            autocapitalization: TextInputAutocapitalization = .sentences,
+            onSubmit: (() -> Void)? = nil,
+            backgroundColor: Color = Color(.inputContainer).opacity(0.12),
+            shinyColor: Color = Color.blue.opacity(0.03),
+            verticalPadding: CGFloat = 14,
             text: Binding<String>
         ) {
             self.placeholder = placeholder
             self.showClearButton = showClearButton
+            self.font = font
+            self.textColor = textColor
+            self.cursorColor = cursorColor
+            self.keyboardType = keyboardType
+            self.returnKeyType = returnKeyType
+            self.autocorrectionDisabled = autocorrectionDisabled
+            self.autocapitalization = autocapitalization
+            self.onSubmit = onSubmit
+            self.backgroundColor = backgroundColor
+            self.shinyColor = shinyColor
+            self.verticalPadding = verticalPadding
             self._text = text
         }
         
         var body: some View {
-            Container.ContentView {
+            Container.ContentView(
+                padding: 16,
+                color: backgroundColor,
+                cornerRadius: 16
+            ) {
                 HStack(alignment: .center) {
                     TextField(placeholder, text: $text)
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(.inputContainerTextFieldFill)
+                        .font(font)
+                        .foregroundStyle(textColor)
+                        .tint(cursorColor)
+                        .keyboardType(keyboardType)
+                        .submitLabel(returnKeyType)
+                        .autocorrectionDisabled(autocorrectionDisabled)
+                        .textInputAutocapitalization(autocapitalization)
+                        .onSubmit {
+                            onSubmit?()
+                        }
                     
                     if showClearButton && !text.isEmpty {
                         Button { 
