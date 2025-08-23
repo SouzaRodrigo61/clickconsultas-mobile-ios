@@ -67,11 +67,11 @@ extension Input {
             returnKeyType: SubmitLabel = .done,
             autocorrectionDisabled: Bool = false,
             autocapitalization: TextInputAutocapitalization = .sentences,
-            onSubmit: (() -> Void)? = nil,
             backgroundColor: Color = Color(.inputContainer).opacity(0.12),
             shinyColor: Color = Color.blue.opacity(0.03),
             verticalPadding: CGFloat = 14,
-            text: Binding<String>
+            text: Binding<String>,
+            onSubmit: @escaping (() -> Void)? = nil
         ) {
             self.title = title
             self.placeholder = placeholder
