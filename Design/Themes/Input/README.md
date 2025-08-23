@@ -1,432 +1,193 @@
 # Sistema de Inputs - ClickConsultas
 
-Sistema modular e customizável de componentes de input para SwiftUI, inspirado no Material Design e Angular Material.
+Sistema de componentes de input modular e customizável para SwiftUI, seguindo o padrão de design do Figma.
 
-## 🚀 Características
+## Visão Geral
 
-- **Modular**: Componentes independentes e reutilizáveis
-- **Customizável**: Cores, fontes, efeitos totalmente configuráveis
-- **Animado**: Transições suaves e efeitos visuais modernos
-- **Acessível**: Suporte completo a `@FocusState` e acessibilidade
-- **Flexível**: Combinações ilimitadas de componentes
-- **Keyboard Inteligente**: Configurações avançadas de keyboard (tipo, botão de ação, autocorreção)
+O sistema é composto por componentes modulares que podem ser combinados:
+- `Input.Field`: Campo de input básico
+- `Input.Title`: Campo com título fixo
+- `Input.Placeholder`: Campo com placeholder animado
 
-## 📦 Componentes Principais
+## Características Gerais
 
-### `Input.Container`
-Container principal com efeitos visuais (shiny, focus).
+- **Altura fixa**: 57px (garantida pelo Container)
+- **Estilo consistente**: Usa as cores do sistema de design
+- **Botão de limpar**: Opcional, aparece quando há texto
+- **Simplicidade**: Componentes focados e diretos
+- **Reutilização**: Usa o `Container.ContentView` existente
 
-### `Input.Field`
-Campo de input básico com suporte a prefixo e clear button.
+## Componentes
 
-### `Input.Title`
-Título padronizado para inputs.
+### 1. Input.Field
 
-### `Input.WithTitle`
-Wrapper que combina título com campo de input.
+Campo de input básico com TextField e botão de limpar opcional.
 
-### `Input.Animated`
-Input com animação de placeholder que vira título.
-
-## 🎯 Métodos Convenientes
-
-### Básico
 ```swift
-Input.Container.basic(
-    placeholder: "Digite seu nome",
-    text: $text,
-    isFocused: $isFocused
+@State private var email = ""
+
+Input.Field(
+    placeholder: "Digite seu email",
+    showClearButton: true,
+    text: $email
 )
 ```
 
-### Com Título
+**Parâmetros:**
+- `placeholder`: Texto de placeholder do campo
+- `showClearButton`: Se deve mostrar botão de limpar (padrão: false)
+- `text`: Binding para o texto do campo
+
+### 2. Input.Title
+
+Campo com título fixo acima do TextField.
+
 ```swift
-Input.Container.withTitle(
-    title: "Nome Completo",
-    placeholder: "Digite seu nome",
-    text: $text,
-    isFocused: $isFocused
+@State private var email = ""
+
+Input.Title(
+    title: "Email",
+    placeholder: "Digite seu email",
+    showClearButton: true,
+    text: $email
 )
 ```
 
-### Animado
+**Parâmetros:**
+- `title`: Texto do título (sempre visível)
+- `placeholder`: Texto de placeholder do campo
+- `showClearButton`: Se deve mostrar botão de limpar (padrão: false)
+- `text`: Binding para o texto do campo
+
+### 3. Input.Placeholder
+
+Campo onde o placeholder vira título quando focado ou com texto.
+
 ```swift
-Input.Container.animated(
-    placeholder: "Nome completo",
-    text: $text,
-    isFocused: $isFocused
+@State private var email = ""
+
+Input.Placeholder(
+    placeholder: "Digite seu email",
+    showClearButton: true,
+    text: $email
 )
 ```
 
-### Específicos
-```swift
-// Username (keyboard padrão, sem autocorreção)
-Input.Container.revtag(text: $username, isFocused: $isFocused)
+**Parâmetros:**
+- `placeholder`: Texto que vira título quando animado
+- `showClearButton`: Se deve mostrar botão de limpar (padrão: false)
+- `text`: Binding para o texto do campo
 
-// Email (keyboard de email, sem autocorreção)
-Input.Container.email(text: $email, isFocused: $isFocused)
-
-// Telefone (keyboard numérico)
-Input.Container.phone(text: $phone, isFocused: $isFocused)
-
-// Busca (keyboard padrão, botão "Buscar")
-Input.Container.search(text: $search, isFocused: $isFocused)
-```
-
-## 🎨 Customização
-
-### Cores
-```swift
-Input.Container.basic(
-    placeholder: "Customizado",
-    text: $text,
-    isFocused: $isFocused,
-    backgroundColor: .purple.opacity(0.1),
-    shinyColor: .yellow.opacity(0.2)
-)
-```
-
-### Fontes
-```swift
-Input.Container.basic(
-    placeholder: "Fonte customizada",
-    text: $text,
-    isFocused: $isFocused,
-    font: .system(size: 20, weight: .bold),
-    textColor: .purple,
-    cursorColor: .purple
-)
-```
-
-### Prefixos
-```swift
-// Ícone
-prefix: .icon("envelope")
-
-// Texto
-prefix: .text("@")
-```
-
-### Keyboard
-```swift
-// Configurações avançadas de keyboard
-Input.Container.basic(
-    placeholder: "Digite seu nome",
-    text: $name,
-    isFocused: $isFocused,
-    keyboardType: .default,
-    returnKeyType: .next,
-    autocorrectionDisabled: false,
-    autocapitalization: .words,
-    onSubmit: {
-        // Ação ao pressionar return
-        print("Próximo campo")
-    }
-)
-```
-
-## 🔧 Estados e Comportamentos
-
-### Estados do Input Animado
+**Estados:**
 1. **Inativo + vazio**: Só placeholder centralizado
 2. **Focado + vazio**: Placeholder anima para cima como título
 3. **Com texto**: Título permanece visível
 4. **Focado + texto**: Título permanece visível
 
-### Efeitos Visuais
-- **Background dinâmico**: Muda de cor quando focado
-- **Efeito shiny**: Gradiente radial sutil quando ativo
-- **Animações**: Transições suaves de 0.2s
+## Estrutura de Arquivos
 
-### Configurações de Keyboard
-- **Tipos de Keyboard**: `.default`, `.emailAddress`, `.phonePad`, `.numberPad`, etc.
-- **Botões de Ação**: `.next`, `.done`, `.search`, `.send`, etc.
-- **Autocorreção**: Configurável por campo
-- **Capitalização**: `.sentences`, `.words`, `.characters`, `.none`
+```
+Design/Themes/Input/
+├── Input.swift (enum base)
+├── Input+Field.swift (campo básico)
+├── Input+Title.swift (campo com título)
+├── Input+Placeholder.swift (placeholder animado)
+└── Input+Preview.swift (preview consolidado)
+```
 
-## 📱 Exemplos de Uso
+## Cores Utilizadas
 
-### Formulário Completo
+- **Background**: `.inputContainer.opacity(0.12)`
+- **Texto**: `.inputContainerTextFieldFill`
+- **Título**: `.inputContainerTextFieldFill.opacity(0.65)`
+- **Botão de limpar**: `.inputContainerTextFieldFill.opacity(0.35)`
+
+## Fontes Utilizadas
+
+- **Título**: `.system(size: 12, weight: .medium)`
+- **TextField**: `.system(size: 15, weight: .medium)`
+- **Botão de limpar**: `.system(size: 18)`
+
+## Exemplos de Uso
+
+### Formulário de Login
+
 ```swift
-struct UserForm: View {
-    @State var name = ""
-    @State var email = ""
-    @State var ddi = ""
-    @State var phone = ""
-    
-    @FocusState var isFocusedName: Bool
-    @FocusState var isFocusedEmail: Bool
-    @FocusState var isFocusedDdi: Bool
-    @FocusState var isFocusedPhone: Bool
+struct LoginView: View {
+    @State private var email = ""
+    @State private var password = ""
     
     var body: some View {
-        VStack(spacing: 20) {
-            Input.Container.withTitle(
-                title: "Nome Completo",
-                placeholder: "Digite seu nome",
-                text: $name,
-                isFocused: $isFocusedName,
-                keyboardType: .default,
-                returnKeyType: .next,
-                autocapitalization: .words,
-                onSubmit: {
-                    isFocusedEmail = true
-                }
+        VStack(spacing: 16) {
+            Input.Title(
+                title: "Email",
+                placeholder: "Digite seu email",
+                showClearButton: true,
+                text: $email
             )
             
-            Input.Container.email(
-                text: $email,
-                isFocused: $isFocusedEmail,
-                onSubmit: {
-                    isFocusedDdi = true
-                }
+            Input.Field(
+                placeholder: "Digite sua senha",
+                showClearButton: false,
+                text: $password
             )
-            
-            HStack {
-                Input.Container.basic(
-                    placeholder: "DDI",
-                    text: $ddi,
-                    isFocused: $isFocusedDdi,
-                    keyboardType: .phonePad,
-                    returnKeyType: .next,
-                    autocorrectionDisabled: true,
-                    autocapitalization: .never,
-                    onSubmit: {
-                        isFocusedPhone = true
-                    }
-                )
-                .frame(width: 100)
-                
-                Input.Container.basic(
-                    placeholder: "Telefone",
-                    text: $phone,
-                    isFocused: $isFocusedPhone,
-                    keyboardType: .phonePad,
-                    returnKeyType: .done,
-                    autocorrectionDisabled: true,
-                    autocapitalization: .never,
-                    onSubmit: {
-                        // Finalizar formulário
-                        print("Formulário concluído!")
-                    }
-                )
-            }
         }
-        .padding()
+        .padding(.horizontal)
     }
 }
 ```
 
-### Input Customizado
+### Formulário de Cadastro
+
 ```swift
-Input.Container.animated(
-    placeholder: "Mensagem",
-    prefix: .icon("message"),
-    text: $message,
-    isFocused: $isFocused,
-    showClearButton: true,
-    font: .system(size: 18),
-    textColor: .primary,
-    cursorColor: .purple,
-    backgroundColor: .purple.opacity(0.05),
-    shinyColor: .purple.opacity(0.1)
-)
-```
-
-## 🎯 Boas Práticas
-
-### 1. Use @FocusState
-```swift
-@FocusState var isFocused: Bool
-```
-
-### 2. Configure Keyboard Adequadamente
-```swift
-// Para nomes: capitalização de palavras
-keyboardType: .default,
-returnKeyType: .next,
-autocapitalization: .words
-
-// Para emails: sem autocorreção
-keyboardType: .emailAddress,
-returnKeyType: .next,
-autocorrectionDisabled: true,
-autocapitalization: .never
-
-// Para telefones: teclado numérico
-keyboardType: .phonePad,
-returnKeyType: .next,
-autocorrectionDisabled: true,
-autocapitalization: .never
-
-// Para busca: botão de busca
-keyboardType: .default,
-returnKeyType: .search,
-autocorrectionDisabled: false
-```
-
-### 3. Combine Componentes
-```swift
-// Em vez de criar tudo do zero, combine componentes existentes
-Input.Container.withTitle(
-    title: "Campo Customizado",
-    spacing: 12
-) {
-    Input.Field(
-        placeholder: "Digite aqui",
-        prefix: .icon("star"),
-        text: $text,
-        isFocused: $isFocused
-    )
+struct SignUpView: View {
+    @State private var name = ""
+    @State private var email = ""
+    @State private var phone = ""
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Input.Placeholder(
+                placeholder: "Digite seu nome completo",
+                showClearButton: true,
+                text: $name
+            )
+            
+            Input.Title(
+                title: "Email",
+                placeholder: "Digite seu email",
+                showClearButton: true,
+                text: $email
+            )
+            
+            Input.Field(
+                placeholder: "Digite seu telefone",
+                showClearButton: true,
+                text: $phone
+            )
+        }
+        .padding(.horizontal)
+    }
 }
 ```
 
-### 4. Mantenha Consistência
-```swift
-// Use as mesmas cores e fontes em todo o app
-let appColors = (
-    background: Color(.systemGray5),
-    shiny: Color.blue.opacity(0.03)
-)
+## Padrões de Design
 
-Input.Container.basic(
-    placeholder: "Campo",
-    text: $text,
-    isFocused: $isFocused,
-    backgroundColor: appColors.background,
-    shinyColor: appColors.shiny
-)
-```
+### Altura Consistente
+Todos os componentes mantêm altura de 57px conforme especificação do Figma.
 
-### 5. Navegação Inteligente entre Campos
-```swift
-// Use onSubmit para navegar entre campos
-Input.Container.basic(
-    placeholder: "Nome",
-    text: $name,
-    isFocused: $isFocusedName,
-    returnKeyType: .next,
-    onSubmit: {
-        isFocusedEmail = true
-    }
-)
+### Espaçamento
+- Padding horizontal: 16px (configurado no Container)
+- Espaçamento entre título e campo: 4px
+- Corner radius: 16px
 
-Input.Container.basic(
-    placeholder: "Email",
-    text: $email,
-    isFocused: $isFocusedEmail,
-    returnKeyType: .done,
-    onSubmit: {
-        // Finalizar formulário
-        print("Concluído!")
-    }
-)
-```
+### Animações
+- Transições suaves de 0.2s para mudanças de estado
+- Easing: `.easeInOut`
 
-## 🔄 Migração
+## Compatibilidade
 
-### De TextField Padrão
-```swift
-// Antes
-TextField("Nome", text: $name)
-    .textFieldStyle(RoundedBorderTextFieldStyle())
-
-// Depois
-Input.Container.basic(
-    placeholder: "Nome",
-    text: $name,
-    isFocused: $isFocused
-)
-```
-
-### De Input Customizado
-```swift
-// Antes
-VStack(alignment: .leading) {
-    Text("Nome")
-    TextField("Digite seu nome", text: $name)
-}
-.background(Color.gray.opacity(0.1))
-.cornerRadius(8)
-
-// Depois
-Input.Container.withTitle(
-    title: "Nome",
-    placeholder: "Digite seu nome",
-    text: $name,
-    isFocused: $isFocused
-)
-```
-
-## 🐛 Troubleshooting
-
-### Efeito Shiny Não Aparece
-- Verifique se `isFocused` está sendo passado corretamente
-- Aumente a opacidade do `shinyColor` se necessário
-- Use o debug para verificar se o estado está mudando
-
-### Animação Não Funciona
-- Certifique-se de que está usando `@FocusState`
-- Verifique se o binding está correto
-- Teste com valores diferentes de `duration`
-
-### Prefixo Não Aparece
-- Verifique se o `PrefixContent` está correto
-- Para ícones, use nomes válidos do SF Symbols
-- Para texto, passe uma string válida
-
-## ⌨️ Tipos de Keyboard Disponíveis
-
-### UIKeyboardType
-- `.default` - Teclado padrão
-- `.asciiCapable` - Teclado ASCII
-- `.numbersAndPunctuation` - Números e pontuação
-- `.URL` - Teclado otimizado para URLs
-- `.numberPad` - Teclado numérico
-- `.phonePad` - Teclado de telefone
-- `.namePhonePad` - Nome e telefone
-- `.emailAddress` - Email
-- `.decimalPad` - Decimal
-- `.twitter` - Twitter
-- `.webSearch` - Busca web
-
-### UIReturnKeyType
-- `.default` - Padrão
-- `.go` - Ir
-- `.google` - Google
-- `.join` - Entrar
-- `.next` - Próximo
-- `.route` - Rota
-- `.search` - Buscar
-- `.send` - Enviar
-- `.yahoo` - Yahoo
-- `.done` - Concluído
-- `.emergencyCall` - Chamada de emergência
-- `.continue` - Continuar
-
-### TextInputAutocapitalization
-- `.sentences` - Frases
-- `.words` - Palavras
-- `.characters` - Caracteres
-- `.never` - Nenhuma
-
-## 📚 Referências
-
-- [SwiftUI TextField](https://developer.apple.com/documentation/swiftui/textfield)
-- [UIKeyboardType](https://developer.apple.com/documentation/uikit/uikeyboardtype)
-- [UIReturnKeyType](https://developer.apple.com/documentation/uikit/uireturnkeytype)
-- [Material Design Inputs](https://material.io/components/text-fields)
-- [Angular Material](https://material.angular.io/components/input)
-
-## 🤝 Contribuição
-
-Para contribuir com melhorias:
-
-1. Mantenha a modularidade dos componentes
-2. Adicione documentação para novos recursos
-3. Teste em diferentes tamanhos de tela
-4. Mantenha a consistência visual
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+Os componentes são compatíveis com:
+- iOS 15+
+- SwiftUI 3.0+
+- Sistema de cores do projeto ClickConsultas
