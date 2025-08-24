@@ -49,5 +49,16 @@ extension Card {
 			}
 		}
 	}
+}
 
+#Preview { 
+    struct PreviewScreen: View { 
+        var body: some View { 
+            Card.ContentView(title: "Title", footer: "Footer") { 
+                Text("Content")
+            }
+        }
+    }
+
+    return PreviewScreen()
 }

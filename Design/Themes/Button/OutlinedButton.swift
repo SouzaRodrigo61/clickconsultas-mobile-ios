@@ -30,3 +30,41 @@ struct OutlinedButtonStyle: ButtonStyle {
 extension ButtonStyle where Self == OutlinedButtonStyle {
     static var outlined: OutlinedButtonStyle { OutlinedButtonStyle() }
 }
+
+#Preview {
+    VStack(spacing: 20) {
+        Text("OutlinedButtonStyle")
+            .font(.headline)
+            .padding(.bottom)
+        
+        // Botão básico
+        Button("Outlined Button") {
+            print("Outlined Button tapped")
+        }
+        .buttonStyle(.outlined)
+        
+        // Botão com ícone
+        Button {
+            print("Icon outlined button tapped")
+        } label: {
+            HStack {
+                Image(systemName: "heart")
+                Text("Favoritar")
+            }
+        }
+        .buttonStyle(.outlined)
+        
+        // Botão secundário
+        Button("Cancelar") {
+            print("Cancel button tapped")
+        }
+        .buttonStyle(.outlined)
+        
+        // Botão longo
+        Button("Botão com texto mais longo para demonstrar o comportamento da borda") {
+            print("Long outlined button tapped")
+        }
+        .buttonStyle(.outlined)
+    }
+    .padding()
+}

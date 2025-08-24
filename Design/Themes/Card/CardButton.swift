@@ -36,3 +36,15 @@ extension Card {
 		}
 	}
 }
+
+#Preview { 
+    struct PreviewScreen: View { 
+        var body: some View { 
+            Card.Button(action: {}) { 
+                Text("Button")
+            }
+        }
+    }
+
+    return PreviewScreen()
+}

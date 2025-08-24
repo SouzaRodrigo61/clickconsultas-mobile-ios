@@ -71,7 +71,7 @@ extension Input {
             shinyColor: Color = Color.blue.opacity(0.03),
             verticalPadding: CGFloat = 14,
             text: Binding<String>,
-            onSubmit: @escaping (() -> Void)? = nil
+            onSubmit: (() -> Void)? = nil
         ) {
             self.title = title
             self.placeholder = placeholder

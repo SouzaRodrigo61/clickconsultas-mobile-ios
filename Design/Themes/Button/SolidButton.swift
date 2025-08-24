@@ -53,3 +53,59 @@ extension ButtonStyle where Self == SolidButtonStyle {
         SolidButtonStyle(backgroundColor: backgroundColor, insets: insets, innerPadding: innerPadding, isScaleEnabled: isScaleEnabled)
     }
 }
+
+#Preview {
+    VStack(spacing: 20) {
+        Text("SolidButtonStyle")
+            .font(.headline)
+            .padding(.bottom)
+        
+        // Botão sólido básico
+        Button("Solid Button") {
+            print("Solid Button tapped")
+        }
+        .buttonStyle(.solid())
+        
+        // Botão sólido com escala
+        Button("Solid Scale Button") {
+            print("Solid Scale Button tapped")
+        }
+        .buttonStyle(.solidScale())
+        
+        // Botão com cor personalizada
+        Button("Custom Color") {
+            print("Custom color button tapped")
+        }
+        .buttonStyle(.solid(backgroundColor: .green))
+        
+        // Botão com cor personalizada e escala
+        Button("Custom Color + Scale") {
+            print("Custom color + scale button tapped")
+        }
+        .buttonStyle(.solidScale(backgroundColor: .purple.opacity(0.04)))
+        
+        // Botão com ícone
+        Button {
+            print("Icon solid button tapped")
+        } label: {
+            HStack {
+                Image(systemName: "arrow.right.circle.fill")
+                Text("Próximo")
+            }
+        }
+        .buttonStyle(.solid())
+        
+        // Botão longo
+        Button("Botão sólido com texto mais longo para demonstrar o comportamento") {
+            print("Long solid button tapped")
+        }
+        .buttonStyle(.solid())
+        
+        // Botão vermelho (destructive)
+        Button("Excluir") {
+            print("Delete button tapped")
+        }
+        .buttonStyle(.solid(backgroundColor: .red))
+    }
+    .padding()
+}

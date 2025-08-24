@@ -22,3 +22,36 @@ struct AnyButtonStyle: ButtonStyle {
 	}
 }
 
+#Preview {
+    VStack(spacing: 20) {
+        Text("AnyButtonStyle - Wrapper para outros estilos")
+            .font(.headline)
+            .padding(.bottom)
+        
+        // Exemplo usando GlassScaleButtonStyle
+        Button("Glass Scale Button") {
+            print("Glass Scale Button tapped")
+        }
+        .buttonStyle(AnyButtonStyle(GlassScaleButtonStyle()))
+        
+        // Exemplo usando OutlinedButtonStyle
+        Button("Outlined Button") {
+            print("Outlined Button tapped")
+        }
+        .buttonStyle(AnyButtonStyle(OutlinedButtonStyle()))
+        
+        // Exemplo usando SolidButtonStyle
+        Button("Solid Button") {
+            print("Solid Button tapped")
+        }
+        .buttonStyle(AnyButtonStyle(SolidButtonStyle.solid()))
+        
+        // Exemplo usando ScaleButtonStyle
+        Button("Scale Button") {
+            print("Scale Button tapped")
+        }
+        .buttonStyle(AnyButtonStyle(ScaleButtonStyle()))
+    }
+    .padding()
+}
+
