@@ -16,6 +16,8 @@ extension NewPassword {
             let email: String
             var newPassword: String = ""
             var confirmPassword: String = ""
+            var isNewPasswordVisible: Bool = false
+            var isConfirmPasswordVisible: Bool = false
             var passwordStrength: PasswordStrength = .weak
             var isLoading: Bool = false
             var errorMessage: String?
@@ -32,6 +34,8 @@ extension NewPassword {
         
         enum Action: Equatable, BindableAction {
             case onAppear
+            case toggleNewPasswordVisibility
+            case toggleConfirmPasswordVisibility
             case updatePasswordTapped
             case updatePasswordSucceeded
             case updatePasswordFailed(String)
@@ -51,6 +55,14 @@ extension NewPassword {
             Reduce { state, action in
                 switch action {
                 case .onAppear:
+                    return .none
+                    
+                case .toggleNewPasswordVisibility:
+                    state.isNewPasswordVisible.toggle()
+                    return .none
+                    
+                case .toggleConfirmPasswordVisibility:
+                    state.isConfirmPasswordVisible.toggle()
                     return .none
                     
                 case .updatePasswordTapped:

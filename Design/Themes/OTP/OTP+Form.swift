@@ -130,7 +130,6 @@ extension OTP {
         }
         
         private func handleTextChange(at index: Int, newValue: String) {
-            print("handleTextChange: index=\(index), newValue='\(newValue)'")
             
             // Limitar a 1 caractere e apenas números
             let filtered = newValue.filter { $0.isNumber }
@@ -140,16 +139,10 @@ extension OTP {
                 fieldTexts[index] = filtered
             }
             
-            print("fieldTexts[\(index)] = '\(fieldTexts[index])'")
-            
             // Navegação automática
             if !fieldTexts[index].isEmpty && index < length - 1 {
-                // Se preencheu, vai para o próximo
-                print("Navegando para próximo campo: \(index + 1)")
                 focusedField = index + 1
             } else if fieldTexts[index].isEmpty && index > 0 {
-                // Se apagou, volta para o anterior
-                print("Navegando para campo anterior: \(index - 1)")
                 focusedField = index - 1
             }
         }
@@ -195,9 +188,6 @@ extension OTP {
                     groupSize: 3,
                     code: $otpCode
                 )
-                .onChange(of: otpCode) { _, newValue in
-                    print("Código mudou para: \(newValue)")
-                }
             }
             .padding()
         }

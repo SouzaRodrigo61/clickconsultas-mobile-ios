@@ -30,20 +30,13 @@ extension OTPCode {
             case otpTimerTick
             case verifyOTPSucceeded
             case verifyOTPFailed(String)
+            case otpCodeChanged(String)
             case destination(PresentationAction<Destination.Action>)
             case binding(BindingAction<State>)
         }
         
         var body: some ReducerOf<Self> {
             BindingReducer()
-                .onChange(of: \.otpCode) { _, code in
-                    Reduce { state, _ in
-                        if code.count == 6 {
-                            return .send(.verifyOTPTapped)
-                        }
-                        return .none
-                    }
-                }
             
             Reduce { state, action in
                 switch action {
@@ -83,6 +76,13 @@ extension OTPCode {
                         state.otpTimer -= 1
                     } else {
                         state.canResendOTP = true
+                    }
+                    return .none
+                    
+                case let .otpCodeChanged(code):
+                    // Verificar automaticamente quando o código estiver completo
+                    if code.count == 6 {
+                        return .send(.verifyOTPTapped)
                     }
                     return .none
                     

@@ -18,27 +18,16 @@ extension NewPassword {
                     .ignoresSafeArea()
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Nova Senha")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(.primary)
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 8)
-                    
-                    Text("Digite sua nova senha")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(.inputContainerTextFieldFill.opacity(0.6))
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 32)
                     
                     // Nova Senha
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Nova senha")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(.primary)
                         
-                        Input.Field(
+                        Input.Title(
+                            title: "Informe a Senha",
                             placeholder: "Digite sua nova senha",
                             showClearButton: true,
+                            isSecure: !store.isNewPasswordVisible,
+                            showPasswordToggle: true,
                             font: .system(size: 16, weight: .medium),
                             textColor: .primary,
                             cursorColor: .blue,
@@ -46,8 +35,10 @@ extension NewPassword {
                             returnKeyType: .next,
                             autocorrectionDisabled: true,
                             autocapitalization: .never,
-                            isSecure: true,
-                            text: $store.newPassword
+                            text: $store.newPassword,
+                            onPasswordToggle: {
+                                store.send(.toggleNewPasswordVisibility)
+                            }
                         )
                         
                         // Indicador de força da senha
@@ -75,13 +66,12 @@ extension NewPassword {
                     
                     // Confirmar Senha
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Confirmar senha")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(.primary)
-                        
-                        Input.Field(
+                        Input.Title(
+                            title: "Confirmar Senha",
                             placeholder: "Confirme sua nova senha",
                             showClearButton: true,
+                            isSecure: !store.isConfirmPasswordVisible,
+                            showPasswordToggle: true,
                             font: .system(size: 16, weight: .medium),
                             textColor: .primary,
                             cursorColor: .blue,
@@ -89,8 +79,10 @@ extension NewPassword {
                             returnKeyType: .done,
                             autocorrectionDisabled: true,
                             autocapitalization: .never,
-                            isSecure: true,
-                            text: $store.confirmPassword
+                            text: $store.confirmPassword,
+                            onPasswordToggle: {
+                                store.send(.toggleConfirmPasswordVisibility)
+                            }
                         )
                         
                         // Validação de senhas iguais
@@ -136,7 +128,7 @@ extension NewPassword {
                     .padding(.bottom, 16)
                 }
             }
-            .navigationTitle("Nova Senha")
+            .navigationTitle("Sua Senha")
             .navigationBarTitleDisplayMode(.large)
             .onAppear {
                 store.send(.onAppear)

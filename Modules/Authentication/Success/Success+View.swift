@@ -24,12 +24,17 @@ extension Success {
                     // Ícone de sucesso
                     ZStack {
                         Circle()
-                            .fill(.green.opacity(0.1))
+                            .fill(.blue.opacity(0.1))
                             .frame(width: 120, height: 120)
                         
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 60))
-                            .foregroundStyle(.green)
+                            .foregroundStyle(.blue)
+                    }
+                    .background { 
+                        Image("Particles")
+                            .frame(width: 350, height: 500)
+                            .offset(y: 10)
                     }
                     .padding(.bottom, 24)
                     
@@ -39,11 +44,13 @@ extension Success {
                         .padding(.bottom, 16)
                     
                     Text("Sua senha foi atualizada com sucesso. Agora você pode fazer login com sua nova senha.")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(.inputContainerTextFieldFill.opacity(0.6))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.inputContainerTextFieldFill.opacity(0.7))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                         .padding(.bottom, 48)
+                    
+                    Spacer()
                     
                     Button {
                         store.send(.finishTapped)
@@ -58,8 +65,6 @@ extension Success {
                     }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 16)
-                    
-                    Spacer()
                 }
                 
                 // Confete animado

@@ -11,6 +11,7 @@ import SwiftUI
 extension OTPCode {
     struct ContentView: View {
         @Bindable var store: StoreOf<Feature>
+        @Namespace private var buttonNamespace
         
         var body: some View {
             ZStack {
@@ -25,9 +26,16 @@ extension OTPCode {
                         .padding(.bottom, 32)
                     
                     // OTP Code Field
-                    OTPCodeField(code: $store.otpCode)
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 24)
+                    OTP.Form(
+                        length: 6,
+                        groupSize: 3,
+                        code: $store.otpCode
+                    )
+                    .onChange(of: store.otpCode) { _, newValue in
+                        store.send(.otpCodeChanged(newValue))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
                     
                     // Timer e Reenviar
                     HStack {
@@ -35,6 +43,8 @@ extension OTPCode {
                             Text("Reenviar em \(store.otpTimer)s")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundStyle(.inputContainerTextFieldFill.opacity(0.6))
+                                .matchedGeometryEffect(id: "timer", in: buttonNamespace)
+                                .transition(.scale.combined(with: .opacity))
                         } else {
                             Button {
                                 store.send(.resendOTPTapped)
@@ -43,12 +53,15 @@ extension OTPCode {
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundStyle(.primaryButton)
                             }
+                            .matchedGeometryEffect(id: "resend", in: buttonNamespace)
+                            .transition(.scale.combined(with: .opacity))
                         }
                         
                         Spacer()
                     }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 16)
+                    .animation(.easeInOut(duration: 0.3), value: store.otpTimer)
                     
                     if let errorMessage = store.errorMessage {
                         Text(errorMessage)
@@ -56,25 +69,40 @@ extension OTPCode {
                             .foregroundColor(.red)
                             .padding(.horizontal, 16)
                             .padding(.bottom, 16)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                            .animation(.easeInOut(duration: 0.3), value: store.errorMessage)
                     }
                     
                     Spacer()
                     
-                    if store.isLoading {
-                        HStack {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            Text("Verificando...")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundStyle(.white)
+                    Button {
+                        store.send(.verifyOTPTapped)
+                    } label: {
+                        HStack(alignment: .center) {
+                            if store.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                    .matchedGeometryEffect(id: "loading", in: buttonNamespace)
+                                    .transition(.scale.combined(with: .opacity))
+                            }
+                            
+                            if !store.isLoading {
+                                Text(store.errorMessage != nil ? "Tentar Novamente" : "Verificar Código")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .matchedGeometryEffect(id: "text", in: buttonNamespace)
+                                    .transition(.scale.combined(with: .opacity))
+                            }
                         }
+                        .padding(.vertical, 4)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(.primaryButton.opacity(0.65))
-                        .cornerRadius(12)
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 16)
                     }
+                    .buttonStyle(.pill(backgroundColor: (store.otpCode.isEmpty || store.isLoading || store.errorMessage == nil) ? .primaryButton.opacity(0.65) : .primaryButton))
+                    .disabled(store.otpCode.isEmpty || store.isLoading || store.errorMessage == nil)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
+                    .animation(.easeInOut(duration: 0.3), value: store.isLoading)
+                    .animation(.easeInOut(duration: 0.3), value: store.errorMessage)
+                    .animation(.easeInOut(duration: 0.3), value: store.otpCode.isEmpty)
                 }
             }
             .navigationTitle("Código de Verificação")
@@ -82,55 +110,10 @@ extension OTPCode {
             .onAppear {
                 store.send(.onAppear)
             }
-            .sheet(store: store.scope(state: \.$destination, action: \.destination)) { destination in
-                switch destination.state {
-                case .newPassword:
-                    if let passwordStore = destination.scope(state: \.newPassword, action: \.newPassword) {
-                        NewPassword.ContentView(store: passwordStore)
-                    }
-                }
-            }
-        }
-    }
-}
-
-// Componente OTP Code Field
-struct OTPCodeField: View {
-    @Binding var code: String
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            // Campo de entrada oculto
-            TextField("", text: $code)
-                .keyboardType(.numberPad)
-                .opacity(0)
-                .frame(height: 0)
-                .onChange(of: code) { _, newValue in
-                    if newValue.count > 6 {
-                        code = String(newValue.prefix(6))
-                    }
-                }
-            
-            // Visualização dos dígitos
-            HStack(spacing: 12) {
-                ForEach(0..<6, id: \.self) { index in
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.inputContainer)
-                            .frame(width: 50, height: 60)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.inputContainerTextFieldFill.opacity(0.3), lineWidth: 1)
-                            )
-                        
-                        if index < code.count {
-                            Text(String(code[code.index(code.startIndex, offsetBy: index)]))
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundStyle(.primary)
-                        }
-                    }
-                }
-            }
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.newPassword, action: \.destination.newPassword), 
+                destination: NewPassword.ContentView.init(store:)
+            )
         }
     }
 }
