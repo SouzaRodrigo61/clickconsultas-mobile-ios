@@ -3,15 +3,15 @@
 ## Estado Atual do Desenvolvimento
 
 ### 📅 Data da Última Atualização
-**Janeiro 2025** - Início do projeto
+**Janeiro 2025** - Implementação da navegação condicional
 
 ### 🎯 Foco Atual
-**Fase 1: Estruturação Base do Projeto**
+**Fase 1: Navegação Condicional Implementada**
 
 ### 📊 Status Geral
-- **Progresso**: 5% completo
-- **Fase**: Setup inicial e documentação
-- **Próximo Milestone**: Estrutura de módulos TCA
+- **Progresso**: 15% completo
+- **Fase**: Navegação base implementada
+- **Próximo Milestone**: Persistência de autenticação
 
 ## Trabalho Recente
 
@@ -38,22 +38,29 @@
    - Extensões de Color com suporte a hex
    - Sistema de gradientes (Linear e Radial) configurado
 
+5. **Navegação Condicional Implementada** ⭐ **NOVO**
+   - Root Feature com lógica de navegação
+   - Authentication Feature com formulário de login
+   - Home Feature com interface básica
+   - Comunicação entre módulos via TCA
+   - Navegação baseada no estado de autenticação
+
 ### 🔄 Em Andamento
-1. **Estrutura de Módulos**
-   - Definição da estrutura de pastas
-   - Configuração de dependências
-   - Setup do módulo Shared (Swift)
+1. **Persistência de Autenticação**
+   - Implementar armazenamento de token
+   - Verificação de sessão válida
+   - Logout com limpeza de dados
 
 ### ⏳ Próximos Passos
-1. **Implementação da Arquitetura Base**
-   - Configurar módulo Shared com Domain Layer Swift
-   - Implementar estrutura TCA básica
-   - Criar sistema de navegação
+1. **Implementação da Persistência**
+   - Configurar Keychain para tokens
+   - Implementar verificação de sessão
+   - Adicionar refresh token
 
 2. **Features Core**
-   - Autenticação e cadastro
-   - Tela de boas-vindas
-   - Home básica
+   - Busca de médicos
+   - Agendamento de consultas
+   - Perfil do usuário
 
 ## Decisões Ativas
 
@@ -62,14 +69,16 @@
 - **Swift**: Toda a lógica de negócio implementada em Swift
 - **Tuist**: Ferramenta principal para gerenciamento de projeto
 - **SwiftUI**: Framework de UI declarativo
+- **iOS 18+**: Aproveitando @ObservableState nativo
 
 ### 📁 Estrutura de Projeto
 ```
 clickconsultas-mobile-ios/
 ├── App/                          # Aplicação principal
 ├── Modules/                      # Módulos de features
-│   ├── Auth/                     # Autenticação
-│   ├── Home/                     # Tela principal
+│   ├── Root/                     # Navegação condicional ⭐
+│   ├── Authentication/           # Login e cadastro ⭐
+│   ├── Home/                     # Tela principal ⭐
 │   ├── Search/                   # Busca de médicos
 │   ├── Booking/                  # Agendamento
 │   └── Profile/                  # Perfil do usuário
@@ -86,11 +95,37 @@ clickconsultas-mobile-ios/
 - **Componentes**: Gradientes implementados (Linear e Radial)
 - **Ícones**: Ainda não selecionados
 
+## Implementações Técnicas
+
+### 🔐 Navegação Condicional
+```swift
+// Root Feature
+@Reducer
+struct Feature {
+    @ObservableState
+    struct State: Equatable {
+        var isAuthenticated: Bool = false
+        @Presents var destination: Destination.State?
+    }
+    
+    enum Action: Equatable {
+        case authenticationSucceeded
+        case logoutRequested
+    }
+}
+```
+
+### 📱 Fluxo de Navegação
+1. **App Inicia** → Root verifica autenticação
+2. **Não Logado** → Mostra Authentication
+3. **Login Bem-sucedido** → Authentication → Root → Home
+4. **Logout** → Home → Root → Authentication
+
 ## Problemas e Desafios
 
 ### ⚠️ Desafios Técnicos
-1. **Estrutura de Módulos**: Organização eficiente
-2. **Navegação TCA**: Implementação de fluxos complexos
+1. **Persistência de Sessão**: Implementar armazenamento seguro
+2. **Refresh Token**: Gerenciar renovação automática
 3. **Domain Layer**: Separação clara de responsabilidades
 
 ### ⚠️ Desafios de Produto
@@ -101,20 +136,20 @@ clickconsultas-mobile-ios/
 ## Próximas Tarefas Prioritárias
 
 ### 🔥 Alta Prioridade
-1. **Setup do Módulo Shared**
-   - Configurar Domain Layer Swift
-   - Definir modelos de domínio
-   - Implementar use cases e repositórios
+1. **Persistência de Autenticação**
+   - Implementar Keychain para tokens
+   - Verificação de sessão válida
+   - Logout com limpeza de dados
 
-2. **Estrutura TCA Base**
-   - Criar AppReducer principal
-   - Implementar sistema de navegação
-   - Configurar dependências
+2. **Integração com APIs**
+   - Configurar cliente HTTP
+   - Implementar endpoints de auth
+   - Tratamento de erros
 
-3. **Feature de Autenticação**
-   - Tela de boas-vindas
-   - Login básico
-   - Cadastro simples
+3. **Validação de Formulários**
+   - Validação de email
+   - Validação de senha
+   - Feedback visual de erros
 
 ### 🔶 Média Prioridade
 1. **Design System**
@@ -123,8 +158,8 @@ clickconsultas-mobile-ios/
    - Estabelecer tipografia
 
 2. **Home Screen**
-   - Layout básico
-   - Navegação principal
+   - Dashboard com dados reais
+   - Navegação para outras telas
    - Componentes essenciais
 
 ### 🔵 Baixa Prioridade
@@ -173,16 +208,18 @@ clickconsultas-mobile-ios/
 ## Métricas de Progresso
 
 ### 📈 Indicadores
-- **Features Implementadas**: 0/20
-- **Módulos Criados**: 0/6
+- **Features Implementadas**: 3/20
+- **Módulos Criados**: 3/6
 - **Testes Escritos**: 0%
-- **Documentação**: 80% (estrutura base)
+- **Documentação**: 85% (estrutura base + navegação)
 
 ### 🎯 Objetivos do Sprint
-- [ ] Setup completo do módulo Shared (Swift)
-- [ ] Estrutura TCA base funcionando
-- [ ] Tela de boas-vindas implementada
-- [ ] Sistema de navegação configurado
+- [x] Setup completo do módulo Root
+- [x] Estrutura TCA base funcionando
+- [x] Navegação condicional implementada
+- [x] Interface básica de Authentication e Home
+- [ ] Persistência de autenticação
+- [ ] Integração com APIs
 
 ---
 

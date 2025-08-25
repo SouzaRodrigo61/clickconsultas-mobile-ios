@@ -12,8 +12,6 @@ extension Authentication {
     struct ContentView: View {
         @Bindable var store: StoreOf<Feature>
         
-        @State private var titleText = ""
-        
         var body: some View {
             ZStack { 
                 RadialGradient.authenticationBackground
@@ -39,29 +37,35 @@ extension Authentication {
                         returnKeyType: .next,
                         autocorrectionDisabled: true,
                         autocapitalization: .never,
-                        text: $titleText
+                        text: Binding(
+                            get: { store.email },
+                            set: { store.send(.emailChanged($0)) }
+                        )
                     )
                     .padding(.horizontal, 16)
                     .padding(.bottom, 16)
                     
                     Input.Title(
                         title: "Senha",
-                        placeholder: "Digite seu senha",
+                        placeholder: "Digite sua senha",
                         showClearButton: true,
                         font: .system(size: 16, weight: .medium),
                         textColor: .primary,
                         cursorColor: .blue,
-                        keyboardType: .emailAddress,
-                        returnKeyType: .next,
+                        keyboardType: .default,
+                        returnKeyType: .done,
                         autocorrectionDisabled: true,
                         autocapitalization: .never,
-                        text: $titleText
+                        text: Binding(
+                            get: { store.password },
+                            set: { store.send(.passwordChanged($0)) }
+                        )
                     )
                     .padding(.horizontal, 16)
                     .padding(.bottom, 8)
                     
                     Button { 
-                        
+                        store.send(.forgotPasswordTapped)
                     } label: { 
                         Text("Esqueci minha senha")
                             .font(.system(size: 13, weight: .medium))
@@ -71,18 +75,37 @@ extension Authentication {
                     }
                     .padding(.horizontal, 16)
                     
+                    if let errorMessage = store.errorMessage {
+                        Text(errorMessage)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.red)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
+                    }
+                    
                     Spacer()
                     
                     Button {
-                        print("Long pill button tapped")
+                        store.send(.loginTapped)
                     } label: { 
-                        Text("Continuar")
-                            .font(.system(size: 18, weight: .bold))
-                            .padding(.vertical, 4)
-                            .frame(maxWidth: .infinity)
+                        HStack {
+                            if store.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                    .scaleEffect(0.8)
+                                    .padding(.trailing, 8)
+                            }
+                            
+                            Text(store.isLoading ? "Entrando..." : "Continuar")
+                                .font(.system(size: 18, weight: .bold))
+                        }
+                        .padding(.vertical, 4)
+                        .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.pill(backgroundColor: .primaryButton))
+                    .disabled(store.isLoading)
                     .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
                 }
             }
             .onAppear {

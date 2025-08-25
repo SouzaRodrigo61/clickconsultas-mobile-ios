@@ -1,291 +1,300 @@
 # Progress - ClickConsultas Mobile iOS
 
-## Status Atual do Projeto
+## Status Geral do Projeto
 
-### 📊 Visão Geral
-- **Data de Início**: Janeiro 2025
-- **Fase Atual**: Setup inicial e documentação
-- **Progresso Geral**: 5% completo
-- **Próximo Milestone**: Estrutura de módulos TCA
+### 📊 Progresso Atual
+- **Progresso Geral**: 15% completo
+- **Fase Atual**: Navegação condicional implementada
+- **Próximo Milestone**: Persistência de autenticação
 
-## O que está funcionando
-
-### ✅ Concluído
-
-#### **1. Setup do Projeto**
+### 🎯 Milestones Concluídos
+- [x] Setup inicial do projeto
 - [x] Configuração do Tuist
-- [x] Estrutura básica do projeto Xcode
-- [x] Configuração de targets e schemes
-- [x] Configuração de build settings
+- [x] Estrutura de módulos
+- [x] Design system básico
+- [x] Navegação condicional
 
-#### **2. Documentação**
-- [x] README.md completo
-- [x] Memory Bank estruturado
-- [x] Project Brief definido
-- [x] Product Context detalhado
-- [x] System Patterns documentados
-- [x] Tech Context configurado
-- [x] Active Context atualizado
-- [x] Progress tracking implementado
+### 🔄 Milestones em Andamento
+- [ ] Persistência de autenticação
+- [ ] Integração com APIs
+- [ ] Validação de formulários
 
-#### **3. Arquitetura**
-- [x] Decisão por SwiftUI + TCA
-- [x] Estrutura de módulos planejada
-- [x] Padrões de desenvolvimento estabelecidos
-- [x] Remoção de KMP, arquitetura puramente Swift
+## Detalhamento por Fase
 
-### 🔄 Em Desenvolvimento
+### 🏗️ Fase 1 - Estrutura Base (Concluída)
 
-#### **1. Estrutura Base**
-- [ ] Configuração do módulo Shared
-- [ ] Implementação do Domain Layer
-- [ ] Setup do sistema de dependências TCA
+#### **Setup do Projeto**
+- [x] Configuração do Tuist
+- [x] Estrutura de pastas
+- [x] Configuração de targets
+- [x] Dependências básicas
 
-## O que falta construir
+#### **Arquitetura**
+- [x] Decisão por TCA
+- [x] Estrutura de módulos
+- [x] Padrões de desenvolvimento
+- [x] Documentação base
 
-### 🏗️ Fase 1 - Estrutura Base (Prioridade Alta)
+#### **Design System**
+- [x] Gradientes (Linear e Radial)
+- [x] Extensões de Color
+- [x] Componentes básicos (Input, Button)
+- [x] Cores do tema
 
-#### **Módulo Shared**
-- [ ] **Domain Layer**
-  - [ ] Modelos de domínio (User, Doctor, Appointment, etc.)
-  - [ ] Use Cases (AuthUseCase, DoctorUseCase, etc.)
-  - [ ] Interfaces de repositório
-  - [ ] Erros de domínio
+### 🔐 Fase 2 - Autenticação (Em Andamento)
 
-- [ ] **Data Layer**
-  - [ ] Implementações de repositório
-  - [ ] Fontes de dados (API, Local DB)
-  - [ ] Mapeadores de dados
-  - [ ] Configuração de rede
+#### **Navegação Condicional** ⭐ **CONCLUÍDA**
+- [x] **Root Feature**
+  - [x] Estado de autenticação
+  - [x] Lógica de navegação
+  - [x] Comunicação entre módulos
 
-- [ ] **Utils**
-  - [ ] Extensões úteis
-  - [ ] Helpers
-  - [ ] Constantes
+- [x] **Authentication Feature**
+  - [x] Formulário de login
+  - [x] Estados de loading e erro
+  - [x] Interface básica
+  - [x] Comunicação com Root
 
-#### **App Principal**
-- [ ] **AppReducer**
-  - [ ] Estado global da aplicação
-  - [ ] Sistema de navegação
-  - [ ] Gerenciamento de dependências
+- [x] **Home Feature**
+  - [x] Interface básica
+  - [x] Botão de logout
+  - [x] Navegação para outras telas
+  - [x] Comunicação com Root
 
-- [ ] **Configurações**
-  - [ ] Configuração de ambiente
-  - [ ] Configuração de segurança
-  - [ ] Configuração de logging
+#### **Persistência de Sessão** (Próximo)
+- [ ] **Keychain Integration**
+  - [ ] Armazenamento de tokens
+  - [ ] Recuperação de sessão
+  - [ ] Limpeza no logout
 
-### 🔐 Fase 2 - Autenticação (Prioridade Alta)
+- [ ] **Verificação de Sessão**
+  - [ ] Validação de token
+  - [ ] Refresh automático
+  - [ ] Redirecionamento automático
 
-#### **Feature Auth**
-- [ ] **Tela de Boas-vindas**
-  - [ ] Layout e design
-  - [ ] Navegação para login/cadastro
+#### **Validação de Formulários**
+- [ ] **Email Validation**
+  - [ ] Formato válido
+  - [ ] Feedback visual
+  - [ ] Mensagens de erro
 
-- [ ] **Login**
-  - [ ] Formulário de login
-  - [ ] Validações
-  - [ ] Integração com API
-  - [ ] Persistência de sessão
+- [ ] **Password Validation**
+  - [ ] Requisitos mínimos
+  - [ ] Feedback visual
+  - [ ] Confirmação de senha
 
-- [ ] **Cadastro**
-  - [ ] Formulário de cadastro
-  - [ ] Validação de CPF
-  - [ ] Verificação de email/telefone
-  - [ ] Integração com API
+#### **Integração com APIs**
+- [ ] **HTTP Client**
+  - [ ] Configuração base
+  - [ ] Interceptors
+  - [ ] Tratamento de erros
 
-- [ ] **Recuperação de Senha**
-  - [ ] Formulário de recuperação
-  - [ ] Fluxo de redefinição
-  - [ ] Integração com API
+- [ ] **Auth Endpoints**
+  - [ ] Login
+  - [ ] Logout
+  - [ ] Refresh token
+  - [ ] Validação de sessão
 
-### 🏠 Fase 3 - Home (Prioridade Média)
+### 🏠 Fase 3 - Home (Pendente)
 
-#### **Feature Home**
-- [ ] **Dashboard**
-  - [ ] Header com informações do usuário
-  - [ ] Próximas consultas
-  - [ ] Especialidades populares
-  - [ ] Busca rápida
+#### **Dashboard**
+- [ ] **Header**
+  - [ ] Informações do usuário
+  - [ ] Foto de perfil
+  - [ ] Notificações
 
-- [ ] **Navegação Principal**
-  - [ ] Tab Bar
-  - [ ] Navegação entre tabs
-  - [ ] Gestos e animações
+- [ ] **Próximas Consultas**
+  - [ ] Lista de agendamentos
+  - [ ] Status das consultas
+  - [ ] Ações rápidas
 
-### 🔍 Fase 4 - Busca (Prioridade Média)
+- [ ] **Especialidades Populares**
+  - [ ] Grid de especialidades
+  - [ ] Navegação rápida
+  - [ ] Busca direta
 
-#### **Feature Search**
-- [ ] **Busca de Médicos**
-  - [ ] Campo de busca
-  - [ ] Filtros avançados
-  - [ ] Lista de resultados
+#### **Navegação Principal**
+- [ ] **Tab Bar**
+  - [ ] Home
+  - [ ] Busca
+  - [ ] Agendamentos
+  - [ ] Perfil
+
+- [ ] **Gestos e Animações**
+  - [ ] Transições suaves
+  - [ ] Feedback tátil
+  - [ ] Micro-interações
+
+### 🔍 Fase 4 - Busca (Pendente)
+
+#### **Busca de Médicos**
+- [ ] **Campo de Busca**
+  - [ ] Autocomplete
+  - [ ] Histórico
+  - [ ] Sugestões
+
+- [ ] **Filtros Avançados**
+  - [ ] Especialidade
+  - [ ] Localização
+  - [ ] Disponibilidade
+  - [ ] Preço
+
+- [ ] **Lista de Resultados**
+  - [ ] Cards de médicos
+  - [ ] Informações essenciais
+  - [ ] Avaliações
   - [ ] Paginação
 
-- [ ] **Perfil do Médico**
-  - [ ] Informações detalhadas
-  - [ ] Avaliações
-  - [ ] Localizações
-  - [ ] Disponibilidade
+#### **Perfil do Médico**
+- [ ] **Informações Detalhadas**
+  - [ ] Biografia
+  - [ ] Especialidades
+  - [ ] Formação
+  - [ ] Experiência
 
-### 📅 Fase 5 - Agendamento (Prioridade Alta)
+- [ ] **Avaliações**
+  - [ ] Lista de reviews
+  - [ ] Média de avaliações
+  - [ ] Comentários
 
-#### **Feature Booking**
-- [ ] **Seleção de Data/Hora**
-  - [ ] Calendário interativo
+- [ ] **Localizações**
+  - [ ] Endereços
+  - [ ] Mapas
+  - [ ] Distâncias
+
+### 📅 Fase 5 - Agendamento (Pendente)
+
+#### **Seleção de Data/Hora**
+- [ ] **Calendário Interativo**
+  - [ ] Visualização mensal
   - [ ] Horários disponíveis
-  - [ ] Seleção de local
+  - [ ] Seleção de data
 
-- [ ] **Confirmação**
-  - [ ] Resumo do agendamento
-  - [ ] Termos e condições
-  - [ ] Confirmação final
+- [ ] **Horários Disponíveis**
+  - [ ] Lista de slots
+  - [ ] Filtros por período
+  - [ ] Confirmação
 
-- [ ] **Pagamento**
-  - [ ] Múltiplas formas de pagamento
-  - [ ] Integração com gateway
-  - [ ] Confirmação de pagamento
+#### **Confirmação**
+- [ ] **Resumo do Agendamento**
+  - [ ] Dados do médico
+  - [ ] Data e horário
+  - [ ] Local
+  - [ ] Preço
 
-### 👤 Fase 6 - Perfil (Prioridade Baixa)
+- [ ] **Termos e Condições**
+  - [ ] Política de cancelamento
+  - [ ] Termos de uso
+  - [ ] Aceitação
 
-#### **Feature Profile**
-- [ ] **Dados Pessoais**
-  - [ ] Visualização de dados
-  - [ ] Edição de informações
+### 👤 Fase 6 - Perfil (Pendente)
+
+#### **Dados Pessoais**
+- [ ] **Visualização**
+  - [ ] Informações básicas
+  - [ ] Histórico médico
+  - [ ] Preferências
+
+- [ ] **Edição**
+  - [ ] Formulários de edição
   - [ ] Validações
+  - [ ] Upload de documentos
 
-- [ ] **Histórico**
-  - [ ] Consultas realizadas
-  - [ ] Pagamentos
+#### **Histórico**
+- [ ] **Consultas Realizadas**
+  - [ ] Lista cronológica
+  - [ ] Detalhes das consultas
   - [ ] Avaliações
 
-### 📱 Fase 7 - Funcionalidades Avançadas (Prioridade Baixa)
+- [ ] **Pagamentos**
+  - [ ] Histórico financeiro
+  - [ ] Comprovantes
+  - [ ] Reembolsos
+
+### 📱 Fase 7 - Funcionalidades Avançadas (Pendente)
 
 #### **Notificações**
 - [ ] **Push Notifications**
-  - [ ] Configuração de permissões
+  - [ ] Configuração
   - [ ] Canais personalizados
-  - [ ] Integração com APNs
+  - [ ] Preferências
 
-#### **Geolocalização**
-- [ ] **Localização**
-  - [ ] Detecção automática
-  - [ ] Busca por proximidade
-  - [ ] Permissões
+- [ ] **Lembretes**
+  - [ ] Consultas próximas
+  - [ ] Preparativos
+  - [ ] Confirmações
 
 #### **Offline Support**
-- [ ] **Cache**
-  - [ ] Dados essenciais
+- [ ] **Cache de Dados**
+  - [ ] Informações essenciais
   - [ ] Sincronização
-  - [ ] Estados offline
+  - [ ] Conflitos
 
-## Problemas Conhecidos
+- [ ] **Funcionalidades Offline**
+  - [ ] Visualização de dados
+  - [ ] Agendamentos pendentes
+  - [ ] Sincronização automática
 
-### ⚠️ Técnicos
-1. **Nenhum problema técnico identificado ainda**
-   - Projeto ainda em fase inicial
-   - Estrutura base sendo definida
+## Métricas de Qualidade
 
-### ⚠️ de Produto
-1. **Design System não definido**
-   - Cores, tipografia e componentes pendentes
-   - Necessário designer para definir padrões
+### 🧪 Testes
+- [ ] **Testes Unitários**
+  - [ ] Reducers TCA
+  - [ ] Use Cases
+  - [ ] Utilitários
 
-2. **APIs não definidas**
-   - Endpoints e contratos pendentes
-   - Necessário backend para integração
+- [ ] **Testes de UI**
+  - [ ] Views SwiftUI
+  - [ ] Navegação
+  - [ ] Interações
 
-## Próximos Passos
+- [ ] **Testes de Integração**
+  - [ ] APIs
+  - [ ] Persistência
+  - [ ] Fluxos completos
 
-### 🎯 Sprint Atual (Próximas 2 semanas)
+### 📊 Performance
+- [ ] **Métricas de App**
+  - [ ] Tempo de carregamento
+  - [ ] Uso de memória
+  - [ ] Consumo de bateria
 
-#### **Semana 1**
-- [ ] Setup completo do módulo Shared
-  - [ ] Estrutura de pastas
-  - [ ] Modelos de domínio básicos
-  - [ ] Use cases básicos
-  - [ ] Repositórios básicos
+- [ ] **Otimizações**
+  - [ ] Lazy loading
+  - [ ] Cache de imagens
+  - [ ] Compressão de dados
 
-- [ ] Configuração do AppReducer
-  - [ ] Estado global
-  - [ ] Sistema de navegação básico
-  - [ ] Dependências configuradas
-
-#### **Semana 2**
-- [ ] Feature de Autenticação
-  - [ ] Tela de boas-vindas
-  - [ ] Login básico
-  - [ ] Cadastro básico
-  - [ ] Navegação entre telas
-
-### 🎯 Sprint Seguinte (2-4 semanas)
-
-#### **Semana 3-4**
-- [ ] Home Screen
-  - [ ] Layout básico
-  - [ ] Componentes principais
-  - [ ] Integração com dados
-
-- [ ] Melhorias na Autenticação
-  - [ ] Validações completas
-  - [ ] Recuperação de senha
+### 🔒 Segurança
+- [ ] **Autenticação**
+  - [ ] JWT tokens
   - [ ] Biometria
+  - [ ] 2FA
 
-## Métricas de Progresso
+- [ ] **Dados**
+  - [ ] Criptografia local
+  - [ ] Transmissão segura
+  - [ ] LGPD compliance
 
-### 📈 Indicadores Quantitativos
-- **Features Implementadas**: 0/20 (0%)
-- **Módulos Criados**: 0/6 (0%)
-- **Telas Implementadas**: 0/15 (0%)
-- **Testes Escritos**: 0/50 (0%)
-- **Documentação**: 8/10 (80%)
+## Próximas Entregas
 
-### 📊 Indicadores Qualitativos
-- **Arquitetura**: ✅ Definida
-- **Padrões**: ✅ Estabelecidos
-- **Documentação**: ✅ Estruturada
-- **Setup**: ✅ Configurado
-- **Design**: ❌ Pendente
-- **APIs**: ❌ Pendente
+### 🎯 Sprint Atual
+- [x] Navegação condicional implementada
+- [ ] Persistência de autenticação
+- [ ] Validação de formulários
+- [ ] Integração com APIs
 
-## Riscos e Mitigações
+### 🎯 Próximo Sprint
+- [ ] Dashboard da Home
+- [ ] Busca básica de médicos
+- [ ] Perfil do médico
+- [ ] Testes unitários
 
-### ⚠️ Riscos Identificados
-
-#### **Técnicos**
-1. **Complexidade da Arquitetura TCA**
-   - **Risco**: Curva de aprendizado alta
-   - **Mitigação**: Documentação detalhada e exemplos
-
-2. **Performance com Muitos Módulos**
-   - **Risco**: Build lento com muitos targets
-   - **Mitigação**: Otimizações de build e lazy loading
-
-#### **de Produto**
-1. **Falta de Design System**
-   - **Risco**: Inconsistência visual
-   - **Mitigação**: Definir padrões básicos e iterar
-
-2. **APIs não Definidas**
-   - **Risco**: Bloqueio no desenvolvimento
-   - **Mitigação**: Usar mocks e definir contratos
-
-#### **de Projeto**
-1. **Prazo Apertado**
-   - **Risco**: Não entregar no prazo
-   - **Mitigação**: Priorização rigorosa e MVP focado
-
-## Lições Aprendidas
-
-### ✅ O que está funcionando bem
-1. **Documentação**: Memory Bank bem estruturado
-2. **Arquitetura**: Decisões técnicas sólidas
-3. **Organização**: Estrutura de projeto clara
-
-### 🔄 O que pode ser melhorado
-1. **Design**: Necessário definir padrões visuais
-2. **APIs**: Necessário definir contratos
-3. **Testes**: Estratégia de testes a ser implementada
+### 🎯 Roadmap Q1 2025
+- [ ] Agendamento completo
+- [ ] Sistema de pagamentos
+- [ ] Notificações push
+- [ ] Lançamento beta
 
 ---
 
-**Este documento é atualizado regularmente para refletir o progresso atual do projeto.**
+**Este documento é atualizado regularmente para acompanhar o progresso do desenvolvimento.**

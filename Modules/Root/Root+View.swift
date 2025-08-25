@@ -13,11 +13,26 @@ extension Root {
         @Bindable var store: StoreOf<Feature>
         
         var body: some View {
-            VStack {
-                Text("Root Module")
-                    .font(.title)
+            Group {
+                if let destination = store.destination {
+                    switch destination {
+                    case .authentication:
+                        Authentication.ContentView(
+                            store: store.scope(
+                                state: \.destination?.authentication,
+                                action: \.destination.authentication
+                            )!
+                        )
+                    case .home:
+                        Home.ContentView(
+                            store: store.scope(
+                                state: \.destination?.home,
+                                action: \.destination.home
+                            )!
+                        )
+                    }
+                }
             }
-            .padding()
             .onAppear {
                 store.send(.onAppear)
             }
