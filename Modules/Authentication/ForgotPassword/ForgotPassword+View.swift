@@ -17,21 +17,14 @@ extension ForgotPassword {
                 RadialGradient.authenticationBackground
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
-                    Text("Recuperar Senha")
-                        .font(.system(size: 30, weight: .bold))
-                        .padding(.top, 32)
-                        .padding(.bottom, 36)
-                    
-                    Text("Digite seu email para receber um link de recuperação de senha")
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Digite seu email para receber um codigo de recuperação de senha")
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
-                        .padding(.bottom, 32)
+                        .foregroundStyle(.inputContainerTextFieldFill.opacity(0.4))
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 24)
                     
-                    Input.Title(
-                        title: "Email",
+                    Input.Field(
                         placeholder: "Digite seu email",
                         showClearButton: true,
                         font: .system(size: 16, weight: .medium),
@@ -41,13 +34,29 @@ extension ForgotPassword {
                         returnKeyType: .done,
                         autocorrectionDisabled: true,
                         autocapitalization: .never,
-                        text: Binding(
-                            get: { store.email },
-                            set: { store.send(.emailChanged($0)) }
-                        )
+                        text: $store.email
                     )
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 32)
+                    .padding(.bottom, 16)
+                    
+                    // Badges de sugestão de email
+                    if store.shouldShowEmailSuggestions {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(store.emailSuggestions, id: \.self) { suggestion in
+                                    Button {
+                                        store.send(.emailSuggestionTapped(suggestion))
+                                    } label: { 
+                                        Text(suggestion)
+                                            .font(.system(size: 12, weight: .medium))
+                                    }
+                                    .buttonStyle(.chip(backgroundColor: .inputContainer.opacity(0.12), foregroundColor: .inputContainerTextFieldFill))
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                        .padding(.bottom, 16)
+                    }
                     
                     if let errorMessage = store.errorMessage {
                         Text(errorMessage)
@@ -90,7 +99,8 @@ extension ForgotPassword {
                     .padding(.bottom, 16)
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Recuperar Senha")
+            .navigationBarTitleDisplayMode(.large)
             .onAppear {
                 store.send(.onAppear)
             }

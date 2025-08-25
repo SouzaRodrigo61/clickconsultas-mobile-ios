@@ -35,7 +35,18 @@ extension ButtonStyle where Self == PillButtonStyle {
     ) -> PillButtonStyle {
         PillButtonStyle(
             backgroundColor: backgroundColor, 
-            foregroundColor: foregroundColor
+            foregroundColor: foregroundColor,
+        )
+    }
+    
+    static func chip(
+        backgroundColor: Color = .accentColor, 
+        foregroundColor: Color = .white
+    ) -> PillButtonStyle {
+        PillButtonStyle(
+            backgroundColor: backgroundColor, 
+            foregroundColor: foregroundColor,
+            padding: .init(top: 4, leading: 8, bottom: 4, trailing: 8),
         )
     }
     

@@ -17,24 +17,33 @@ extension ForgotPassword {
             var isLoading: Bool = false
             var errorMessage: String?
             var successMessage: String?
+            
+            // Computed properties para badges
+            var shouldShowEmailSuggestions: Bool = false
+            var emailSuggestions: [String] = ["@gmail.com", "@hotmail.com", "@yahoo.com.br"]
         }
         
-        enum Action: Equatable {
+        enum Action: Equatable, BindableAction {
             case onAppear
-            case emailChanged(String)
             case resetPasswordTapped
             case resetPasswordSucceeded
             case resetPasswordFailed(String)
+            case emailSuggestionTapped(String)
+            case binding(BindingAction<State>)
         }
         
         var body: some ReducerOf<Self> {
+            BindingReducer()
+                .onChange(of: \.email) { _, email in
+                    Reduce { state, _ in
+                        state.shouldShowEmailSuggestions = email.contains("@")
+                        return .none
+                    }
+                }
+            
             Reduce { state, action in
                 switch action {
                 case .onAppear:
-                    return .none
-                    
-                case let .emailChanged(email):
-                    state.email = email
                     return .none
                     
                 case .resetPasswordTapped:
@@ -57,8 +66,19 @@ extension ForgotPassword {
                     state.isLoading = false
                     state.errorMessage = error
                     return .none
+                    
+                case let .emailSuggestionTapped(suggestion):
+                    if let atIndex = state.email.lastIndex(of: "@") {
+                        let baseEmail = String(state.email[..<atIndex])
+                        state.email = baseEmail + suggestion
+                    }
+                    return .none
+                    
+                case .binding:
+                    return .none
                 }
             }
+            ._printChanges()
         }
     }
 } 
