@@ -133,14 +133,11 @@ extension NewPassword {
             .onAppear {
                 store.send(.onAppear)
             }
-            .sheet(store: store.scope(state: \.$destination, action: \.destination)) { destination in
-                switch destination.state {
-                case .success:
-                    if let successStore = destination.scope(state: \.success, action: \.success) {
-                        Success.ContentView(store: successStore)
-                    }
-                }
-            }
+            
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.success, action: \.destination.success), 
+                destination: Success.ContentView.init(store:)
+            )
         }
         
         private func strengthColor(for index: Int) -> Color {
