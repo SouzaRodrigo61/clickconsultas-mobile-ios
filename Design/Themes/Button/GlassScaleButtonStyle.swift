@@ -20,8 +20,8 @@ public struct GlassScaleButtonStyle: ButtonStyle {
 				shadowRadius: 0,
 				shadowY: 0
 			)
-			.scaleEffect(configuration.isPressed ? 0.97 : 1.0)
-			.animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+			            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
 	}
 
 	public init() {}

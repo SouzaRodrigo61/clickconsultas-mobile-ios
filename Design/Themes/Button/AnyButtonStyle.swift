@@ -51,6 +51,25 @@ struct AnyButtonStyle: ButtonStyle {
             print("Scale Button tapped")
         }
         .buttonStyle(AnyButtonStyle(ScaleButtonStyle()))
+        
+        // Exemplo usando PillButtonStyle
+        Button("Pill Button") {
+            print("Pill Button tapped")
+        }
+        .buttonStyle(AnyButtonStyle(PillButtonStyle.pill()))
+        
+        // Exemplo usando PillButtonStyle com cor personalizada
+        Button("Custom Pill") {
+            print("Custom Pill Button tapped")
+        }
+        .buttonStyle(AnyButtonStyle(PillButtonStyle.pill(backgroundColor: .green)))
+        
+        // Exemplo usando PillButtonStyle com largura total
+        Button("Full Width Pill") {
+            print("Full Width Pill Button tapped")
+        }
+        .buttonStyle(AnyButtonStyle(PillButtonStyle.pill(backgroundColor: .purple)))
+        .frame(maxWidth: .infinity)
     }
     .padding()
 }

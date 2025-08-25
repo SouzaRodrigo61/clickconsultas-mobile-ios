@@ -33,7 +33,7 @@ struct SolidButtonStyle: ButtonStyle {
             )
             .brightness(configuration.isPressed ? -0.1 : 0) // Escurece um pouco ao pressionar
             .scaleEffect(configuration.isPressed ? scale() : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
             .padding(insets)
     }
 }
