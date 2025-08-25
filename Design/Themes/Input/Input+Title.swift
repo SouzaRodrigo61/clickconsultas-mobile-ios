@@ -16,6 +16,8 @@ extension Input {
     /// - **Título fixo**: Sempre visível acima do campo
     /// - **Altura fixa**: 57px (garantida pelo Container)
     /// - **Botão de limpar**: Opcional, aparece quando há texto
+    /// - **Modo seguro**: Suporte para campos de senha
+    /// - **Toggle de senha**: Mostrar/ocultar senha quando aplicável
     /// - **Layout estruturado**: Título e campo organizados verticalmente
     /// - **Estilo consistente**: Usa as cores do sistema de design
     ///
@@ -23,6 +25,8 @@ extension Input {
     ///
     /// ```swift
     /// @State private var email = ""
+    /// @State private var password = ""
+    /// @State private var isPasswordVisible = false
     ///
     /// Input.Title(
     ///     title: "Email",
@@ -30,18 +34,30 @@ extension Input {
     ///     showClearButton: true,
     ///     text: $email
     /// )
+    ///
+    /// Input.Title(
+    ///     title: "Senha",
+    ///     placeholder: "Digite sua senha",
+    ///     isSecure: !isPasswordVisible,
+    ///     showPasswordToggle: true,
+    ///     text: $password
+    /// )
     /// ```
     ///
     /// ## Parâmetros
     ///
     /// - `title`: Texto do título (sempre visível)
     /// - `placeholder`: Texto de placeholder do campo
-    /// - `showClearButton`: Se deve mostrar botão de limpar
+    /// - `showClearButton`: Se deve mostrar botão de limpar (não usado com showPasswordToggle)
+    /// - `isSecure`: Se o campo deve estar em modo seguro (para senhas)
+    /// - `showPasswordToggle`: Se deve mostrar toggle de mostrar/ocultar senha
     /// - `text`: Binding para o texto do campo
     struct Title: View {
         let title: String
         let placeholder: String
         let showClearButton: Bool
+        let isSecure: Bool
+        let showPasswordToggle: Bool
         let font: Font
         let textColor: Color
         let cursorColor: Color
@@ -50,6 +66,7 @@ extension Input {
         let autocorrectionDisabled: Bool
         let autocapitalization: TextInputAutocapitalization
         let onSubmit: (() -> Void)?
+        let onPasswordToggle: (() -> Void)?
         let backgroundColor: Color
         let shinyColor: Color
         let verticalPadding: CGFloat
@@ -60,6 +77,8 @@ extension Input {
             title: String,
             placeholder: String,
             showClearButton: Bool = false,
+            isSecure: Bool = false,
+            showPasswordToggle: Bool = false,
             font: Font = .system(size: 15, weight: .medium),
             textColor: Color = .inputContainerTextFieldFill,
             cursorColor: Color = .blue,
@@ -71,11 +90,14 @@ extension Input {
             shinyColor: Color = Color.blue.opacity(0.03),
             verticalPadding: CGFloat = 14,
             text: Binding<String>,
-            onSubmit: (() -> Void)? = nil
+            onSubmit: (() -> Void)? = nil,
+            onPasswordToggle: (() -> Void)? = nil
         ) {
             self.title = title
             self.placeholder = placeholder
             self.showClearButton = showClearButton
+            self.isSecure = isSecure
+            self.showPasswordToggle = showPasswordToggle
             self.font = font
             self.textColor = textColor
             self.cursorColor = cursorColor
@@ -84,6 +106,7 @@ extension Input {
             self.autocorrectionDisabled = autocorrectionDisabled
             self.autocapitalization = autocapitalization
             self.onSubmit = onSubmit
+            self.onPasswordToggle = onPasswordToggle
             self.backgroundColor = backgroundColor
             self.shinyColor = shinyColor
             self.verticalPadding = verticalPadding
@@ -101,20 +124,44 @@ extension Input {
                         Text(title)
                             .font(.system(size: 12, weight: .medium))
                             .foregroundStyle(.inputContainerTextFieldFill.opacity(0.65))
-                        TextField(placeholder, text: $text)
-                            .font(font)
-                            .foregroundStyle(textColor)
-                            .tint(cursorColor)
-                            .keyboardType(keyboardType)
-                            .submitLabel(returnKeyType)
-                            .autocorrectionDisabled(autocorrectionDisabled)
-                            .textInputAutocapitalization(autocapitalization)
-                            .onSubmit {
-                                onSubmit?()
-                            }
+                        
+                        if isSecure {
+                            SecureField(placeholder, text: $text)
+                                .font(font)
+                                .foregroundStyle(textColor)
+                                .tint(cursorColor)
+                                .keyboardType(keyboardType)
+                                .submitLabel(returnKeyType)
+                                .autocorrectionDisabled(autocorrectionDisabled)
+                                .textInputAutocapitalization(autocapitalization)
+                                .onSubmit {
+                                    onSubmit?()
+                                }
+                        } else {
+                            TextField(placeholder, text: $text)
+                                .font(font)
+                                .foregroundStyle(textColor)
+                                .tint(cursorColor)
+                                .keyboardType(keyboardType)
+                                .submitLabel(returnKeyType)
+                                .autocorrectionDisabled(autocorrectionDisabled)
+                                .textInputAutocapitalization(autocapitalization)
+                                .onSubmit {
+                                    onSubmit?()
+                                }
+                        }
                     }
                     
-                    if showClearButton && !text.isEmpty {
+                    // Mostrar toggle de senha ou botão de limpar
+                    if showPasswordToggle {
+                        Button { 
+                            onPasswordToggle?()
+                        } label: { 
+                            Image(systemName: isSecure ? "eye.slash.fill" : "eye.fill")
+                                .font(.system(size: 18))
+                                .foregroundStyle(.inputContainerTextFieldFill.opacity(0.65))
+                        }
+                    } else if showClearButton && !text.isEmpty {
                         Button { 
                             text = "" 
                         } label: { 
@@ -132,7 +179,8 @@ extension Input {
 #Preview {
     struct PreviewScreen: View { 
         @State private var email = ""
-        @State private var cpf = ""
+        @State private var password = ""
+        @State private var isPasswordVisible = false
         
         var body: some View { 
             VStack(spacing: 16) {
@@ -144,10 +192,14 @@ extension Input {
                 )
                 
                 Input.Title(
-                    title: "CPF",
-                    placeholder: "Digite seu CPF",
-                    showClearButton: true,
-                    text: $cpf
+                    title: "Senha",
+                    placeholder: "Digite sua senha",
+                    isSecure: !isPasswordVisible,
+                    showPasswordToggle: true,
+                    text: $password,
+                    onPasswordToggle: {
+                        isPasswordVisible.toggle()
+                    }
                 )
             }
             .padding(.horizontal)

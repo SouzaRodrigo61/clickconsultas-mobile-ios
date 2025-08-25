@@ -15,18 +15,23 @@ extension Authentication {
         struct State: Equatable {
             var email: String = ""
             var password: String = ""
+            var isPasswordVisible: Bool = false
             var isLoading: Bool = false
             var errorMessage: String?
+            var hasFocus: Bool = false
         }
         
         enum Action: Equatable {
             case onAppear
             case emailChanged(String)
             case passwordChanged(String)
+            case togglePasswordVisibility
             case loginTapped
             case loginSucceeded
             case loginFailed(String)
             case forgotPasswordTapped
+            case createAccountTapped
+            case focusChanged(Bool)
         }
         
         var body: some ReducerOf<Self> {
@@ -41,6 +46,10 @@ extension Authentication {
                     
                 case let .passwordChanged(password):
                     state.password = password
+                    return .none
+                    
+                case .togglePasswordVisibility:
+                    state.isPasswordVisible.toggle()
                     return .none
                     
                 case .loginTapped:
@@ -65,6 +74,13 @@ extension Authentication {
                     
                 case .forgotPasswordTapped:
                     // TODO: Implementar fluxo de recuperação de senha
+                    return .none
+                    
+                case let .focusChanged(hasFocus):
+                    state.hasFocus = hasFocus
+                    return .none
+                    
+                case .createAccountTapped:
                     return .none
                 }
             }

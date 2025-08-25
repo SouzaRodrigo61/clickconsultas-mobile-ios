@@ -11,6 +11,7 @@ import SwiftUI
 extension Authentication {
     struct ContentView: View {
         @Bindable var store: StoreOf<Feature>
+        @FocusState private var isFocused: Bool
         
         var body: some View {
             ZStack { 
@@ -42,13 +43,15 @@ extension Authentication {
                             set: { store.send(.emailChanged($0)) }
                         )
                     )
+                    .focused($isFocused)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 16)
                     
                     Input.Title(
                         title: "Senha",
                         placeholder: "Digite sua senha",
-                        showClearButton: true,
+                        isSecure: !store.isPasswordVisible,
+                        showPasswordToggle: true,
                         font: .system(size: 16, weight: .medium),
                         textColor: .primary,
                         cursorColor: .blue,
@@ -59,8 +62,12 @@ extension Authentication {
                         text: Binding(
                             get: { store.password },
                             set: { store.send(.passwordChanged($0)) }
-                        )
+                        ),
+                        onPasswordToggle: {
+                            store.send(.togglePasswordVisibility)
+                        }
                     )
+                    .focused($isFocused)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 8)
                     
@@ -73,40 +80,56 @@ extension Authentication {
                             .padding(.vertical, 4)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
+                    .buttonStyle(.scale)
                     .padding(.horizontal, 16)
-                    
-                    if let errorMessage = store.errorMessage {
-                        Text(errorMessage)
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.red)
-                            .padding(.horizontal, 16)
-                            .padding(.top, 8)
-                    }
                     
                     Spacer()
                     
                     Button {
                         store.send(.loginTapped)
                     } label: { 
-                        HStack {
+                        HStack(alignment: .center) {
                             if store.isLoading {
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                    .scaleEffect(0.8)
-                                    .padding(.trailing, 8)
                             }
                             
-                            Text(store.isLoading ? "Entrando..." : "Continuar")
-                                .font(.system(size: 18, weight: .bold))
+                            if store.isLoading == false {
+                                Text("Continuar")
+                                    .font(.system(size: 18, weight: .bold))
+                            }
                         }
                         .padding(.vertical, 4)
                         .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.pill(backgroundColor: .primaryButton))
+                    .buttonStyle(.pill(backgroundColor: store.isLoading ? .primaryButton.opacity(0.65) : .primaryButton))
                     .disabled(store.isLoading)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 16)
+                    
+                    if store.hasFocus == false && !store.isLoading { 
+                        Button {
+                            store.send(.createAccountTapped)
+                        } label: { 
+                            HStack(alignment: .center) {
+                                if store.isLoading == false {
+                                    Text("Criar um Conta")
+                                        .font(.system(size: 18, weight: .bold))
+                                        .foregroundStyle(.primaryButton)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.pill(backgroundColor: .white))
+                        .disabled(store.isLoading)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 16)
+                    }
                 }
+            }
+            .onChange(of: isFocused) { _, newValue in
+                store.send(.focusChanged(newValue))
             }
             .onAppear {
                 store.send(.onAppear)
