@@ -14,7 +14,7 @@ extension Root {
         @ObservableState
         struct State: Equatable {
             var isAuthenticated: Bool = false
-            var destination: Destination.State?
+            @Presents var destination: Destination.State?
         }
         
         enum Action: Equatable {

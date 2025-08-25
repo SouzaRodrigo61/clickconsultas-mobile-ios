@@ -1,32 +1,47 @@
 //
-//  Authentication+View.swift
+//  CreateAccount+View.swift
 //  ClickConsultasMobileIOS
 //
-//  Created by Rodrigo Souza on 17/08/2025.
+//  Created by Rodrigo Souza on 25/08/2025.
 //
 
 import ComposableArchitecture
 import SwiftUI
 
-extension Authentication {
+extension CreateAccount {
     struct ContentView: View {
         @Bindable var store: StoreOf<Feature>
-        @FocusState private var isFocused: Bool
         
         var body: some View {
-            NavigationStack {
-                ZStack { 
-                    RadialGradient.authenticationBackground
-                        .ignoresSafeArea()
+            ZStack {
+                RadialGradient.authenticationBackground
+                    .ignoresSafeArea()
                 
+                ScrollView {
                     VStack(spacing: 0) {
-                        Image("Logo")
+                        Text("Criar Conta")
+                            .font(.system(size: 30, weight: .bold))
                             .padding(.top, 32)
                             .padding(.bottom, 36)
                         
-                        Text("Bem Vindo")
-                            .font(.system(size: 30, weight: .bold))
-                            .padding(.bottom, 36)
+                        Input.Title(
+                            title: "Nome",
+                            placeholder: "Digite seu nome completo",
+                            showClearButton: true,
+                            font: .system(size: 16, weight: .medium),
+                            textColor: .primary,
+                            cursorColor: .blue,
+                            keyboardType: .default,
+                            returnKeyType: .next,
+                            autocorrectionDisabled: false,
+                            autocapitalization: .words,
+                            text: Binding(
+                                get: { store.name },
+                                set: { store.send(.nameChanged($0)) }
+                            )
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 16)
                         
                         Input.Title(
                             title: "Email",
@@ -44,7 +59,6 @@ extension Authentication {
                                 set: { store.send(.emailChanged($0)) }
                             )
                         )
-                        .focused($isFocused)
                         .padding(.horizontal, 16)
                         .padding(.bottom, 16)
                         
@@ -57,7 +71,7 @@ extension Authentication {
                             textColor: .primary,
                             cursorColor: .blue,
                             keyboardType: .default,
-                            returnKeyType: .done,
+                            returnKeyType: .next,
                             autocorrectionDisabled: true,
                             autocapitalization: .never,
                             text: Binding(
@@ -68,27 +82,45 @@ extension Authentication {
                                 store.send(.togglePasswordVisibility)
                             }
                         )
-                        .focused($isFocused)
                         .padding(.horizontal, 16)
-                        .padding(.bottom, 8)
+                        .padding(.bottom, 16)
                         
-                        Button { 
-                            store.send(.forgotPasswordTapped)
-                        } label: { 
-                            Text("Esqueci minha senha")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundStyle(.primaryButton)
-                                .padding(.vertical, 4)
-                                .frame(maxWidth: .infinity, alignment: .trailing)
+                        Input.Title(
+                            title: "Confirmar Senha",
+                            placeholder: "Confirme sua senha",
+                            isSecure: !store.isConfirmPasswordVisible,
+                            showPasswordToggle: true,
+                            font: .system(size: 16, weight: .medium),
+                            textColor: .primary,
+                            cursorColor: .blue,
+                            keyboardType: .default,
+                            returnKeyType: .done,
+                            autocorrectionDisabled: true,
+                            autocapitalization: .never,
+                            text: Binding(
+                                get: { store.confirmPassword },
+                                set: { store.send(.confirmPasswordChanged($0)) }
+                            ),
+                            onPasswordToggle: {
+                                store.send(.toggleConfirmPasswordVisibility)
+                            }
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 16)
+                        
+                        if let errorMessage = store.errorMessage {
+                            Text(errorMessage)
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.red)
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, 16)
                         }
-                        .buttonStyle(.scale)
-                        .padding(.horizontal, 16)
                         
-                        Spacer()
+                        Spacer(minLength: 32)
                         
                         Button {
-                            store.send(.loginTapped)
-                        } label: { 
+                            store.send(.createAccountTapped)
+                        } label: {
                             HStack(alignment: .center) {
                                 if store.isLoading {
                                     ProgressView()
@@ -96,7 +128,7 @@ extension Authentication {
                                 }
                                 
                                 if store.isLoading == false {
-                                    Text("Continuar")
+                                    Text("Criar Conta")
                                         .font(.system(size: 18, weight: .bold))
                                 }
                             }
@@ -107,51 +139,21 @@ extension Authentication {
                         .disabled(store.isLoading)
                         .padding(.horizontal, 16)
                         .padding(.bottom, 16)
-                        
-                        if store.hasFocus == false && store.isLoading == false { 
-                            Button {
-                                store.send(.createAccountTapped)
-                            } label: { 
-                                HStack(alignment: .center) {
-                                    if store.isLoading == false {
-                                        Text("Criar um Conta")
-                                            .font(.system(size: 18, weight: .bold))
-                                            .foregroundStyle(.primaryButton)
-                                    }
-                                }
-                                .padding(.vertical, 4)
-                                .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.pill(backgroundColor: .white))
-                            .disabled(store.isLoading)
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, 16)
-                        }
                     }
                 }
-                .onChange(of: isFocused) { _, newValue in
-                    store.send(.focusChanged(newValue))
-                }
-                .onAppear {
-                    store.send(.onAppear)
-                }
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.forgotPassword, action: \.destination.forgotPassword), 
-                    destination: ForgotPassword.ContentView.init(store:)
-                )
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.createAccount, action: \.destination.createAccount), 
-                    destination: CreateAccount.ContentView.init(store:)
-                )
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                store.send(.onAppear)
             }
         }
     }
 }
 
 #Preview {
-    Authentication.ContentView(
-        store: Store(initialState: Authentication.Feature.State()) {
-            Authentication.Feature()
+    CreateAccount.ContentView(
+        store: Store(initialState: CreateAccount.Feature.State()) {
+            CreateAccount.Feature()
         }
     )
-}
+} 
