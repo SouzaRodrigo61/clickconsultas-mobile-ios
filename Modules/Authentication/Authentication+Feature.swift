@@ -89,6 +89,7 @@ extension Authentication {
                 case .destination(.presented(.forgotPassword(.destination(.presented(.otpCode(.destination(.presented(.newPassword(.destination(.presented(.success(.finishFlow)))))))))))):
                     state.destination = nil
                     return .none
+                    
                 case .destination:
                     return .none
                 }

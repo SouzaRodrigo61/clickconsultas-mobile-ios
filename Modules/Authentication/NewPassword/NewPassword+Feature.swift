@@ -37,8 +37,8 @@ extension NewPassword {
             case toggleNewPasswordVisibility
             case toggleConfirmPasswordVisibility
             case updatePasswordTapped
-            case updatePasswordSucceeded
-            case updatePasswordFailed(String)
+            case passwordUpdateSucceeded
+            case passwordUpdateFailed(String)
             case destination(PresentationAction<Destination.Action>)
             case binding(BindingAction<State>)
         }
@@ -68,15 +68,10 @@ extension NewPassword {
                 case .updatePasswordTapped:
                     guard state.canUpdatePassword else { return .none }
                     
-                    state.isLoading = true
-                    state.errorMessage = nil
+                    // Apenas validar - o ForgotPassword vai processar
+                    return .none
                     
-                    return .run { send in
-                        try await Task.sleep(for: .seconds(1))
-                        await send(.updatePasswordSucceeded)
-                    }
-                    
-                case .updatePasswordSucceeded:
+                case .passwordUpdateSucceeded:
                     state.isLoading = false
                     state.destination = .success(Success.Feature.State(
                         title: "Senha Atualizada!",
@@ -86,7 +81,7 @@ extension NewPassword {
                     ))
                     return .none
                     
-                case let .updatePasswordFailed(error):
+                case let .passwordUpdateFailed(error):
                     state.isLoading = false
                     state.errorMessage = error
                     return .none

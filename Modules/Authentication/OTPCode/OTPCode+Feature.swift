@@ -11,6 +11,8 @@ import SwiftUI
 extension OTPCode {
     @Reducer
     struct Feature {
+        @Dependency(\.continuousClock) var clock
+        
         @ObservableState
         struct State: Equatable {
             let email: String
@@ -19,6 +21,7 @@ extension OTPCode {
             var canResendOTP: Bool = false
             var isLoading: Bool = false
             var errorMessage: String?
+            var isTimerActive: Bool = true
             
             @Presents var destination: Destination.State?
         }
@@ -41,13 +44,13 @@ extension OTPCode {
             Reduce { state, action in
                 switch action {
                 case .onAppear:
-                    // Iniciar timer para reenvio
+                    // Iniciar timer para reenvio usando continuousClock
                     return .run { send in
-                        for _ in 0..<60 {
-                            try await Task.sleep(for: .seconds(1))
+                        for await _ in clock.timer(interval: .seconds(1)) {
                             await send(.otpTimerTick)
                         }
                     }
+                    .cancellable(id: "OTPTimer")
                     
                 case .verifyOTPTapped:
                     state.isLoading = true
@@ -63,18 +66,20 @@ extension OTPCode {
                     state.canResendOTP = false
                     state.otpCode = ""
                     state.errorMessage = nil
+                    state.isTimerActive = true // Reativar o timer
                     
+                    // Cancelar timer anterior e iniciar novo
                     return .run { send in
-                        for _ in 0..<60 {
-                            try await Task.sleep(for: .seconds(1))
+                        for await _ in clock.timer(interval: .seconds(1)) {
                             await send(.otpTimerTick)
                         }
                     }
+                    .cancellable(id: "OTPTimer")
                     
                 case .otpTimerTick:
-                    if state.otpTimer > 0 {
+                    if state.isTimerActive && state.otpTimer > 0 {
                         state.otpTimer -= 1
-                    } else {
+                    } else if state.otpTimer == 0 {
                         state.canResendOTP = true
                     }
                     return .none
@@ -88,8 +93,9 @@ extension OTPCode {
                     
                 case .verifyOTPSucceeded:
                     state.isLoading = false
+                    state.isTimerActive = false // Parar o timer
                     state.destination = .newPassword(NewPassword.Feature.State(email: state.email))
-                    return .none
+                    return .cancel(id: "OTPTimer") // Cancelar o timer
                     
                 case let .verifyOTPFailed(error):
                     state.isLoading = false

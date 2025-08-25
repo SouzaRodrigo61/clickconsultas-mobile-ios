@@ -31,6 +31,10 @@ extension ForgotPassword {
             case sendOTPSucceeded
             case sendOTPFailed(String)
             case emailSuggestionTapped(String)
+            case processPasswordUpdate(email: String, newPassword: String)
+            case passwordUpdateSucceeded
+            case passwordUpdateFailed(String)
+            case newPasswordUpdateTapped
             case destination(PresentationAction<Destination.Action>)
             case binding(BindingAction<State>)
         }
@@ -77,6 +81,54 @@ extension ForgotPassword {
                     }
                     return .none
                     
+                case let .processPasswordUpdate(email, newPassword):
+                    state.isLoading = true
+                    state.errorMessage = nil
+                    
+                    // TODO: Implementar chamada real para API de atualização de senha
+                    return .run { send in
+                        try await Task.sleep(for: .seconds(1))
+                        
+                        // Simula erro aleatório para teste
+                        if Int.random(in: 1...10) == 1 {
+                            await send(.passwordUpdateFailed("Erro ao atualizar senha. Tente novamente."))
+                        } else {
+                            await send(.passwordUpdateSucceeded)
+                        }
+                    }
+                    
+                case .passwordUpdateSucceeded:
+                    state.isLoading = false
+                    // Responder com sucesso para o NewPassword
+                    return .send(.destination(.presented(.otpCode(.destination(.presented(.newPassword(.passwordUpdateSucceeded)))))))
+                    
+                case let .passwordUpdateFailed(error):
+                    state.isLoading = false
+                    state.errorMessage = error
+                    // Responder com erro para o NewPassword
+                    return .send(.destination(.presented(.otpCode(.destination(.presented(.newPassword(.passwordUpdateFailed(error))))))))
+                    
+                case .newPasswordUpdateTapped:
+                    // Processar atualização de senha do NewPassword
+                    state.isLoading = true
+                    state.errorMessage = nil
+                    
+                    // TODO: Implementar chamada real para API de atualização de senha
+                    return .run { send in
+                        try await Task.sleep(for: .seconds(1))
+                        
+                        // Simula erro aleatório para teste
+                        if Int.random(in: 1...10) == 1 {
+                            await send(.passwordUpdateFailed("Erro ao atualizar senha. Tente novamente."))
+                        } else {
+                            await send(.passwordUpdateSucceeded)
+                        }
+                    }
+                    
+                case .destination(.presented(.otpCode(.destination(.presented(.newPassword(.updatePasswordTapped)))))):
+                    // Interceptar updatePasswordTapped do NewPassword e processar
+                    return .send(.newPasswordUpdateTapped)
+                    
                 case .destination:
                     return .none
                     
@@ -87,6 +139,7 @@ extension ForgotPassword {
             .ifLet(\.$destination, action: \.destination) {
                 Destination()
             }
+            ._printChanges()
         }
     }
 } 
