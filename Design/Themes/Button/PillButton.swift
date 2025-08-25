@@ -29,17 +29,26 @@ struct PillButtonStyle: ButtonStyle {
 }
 
 extension ButtonStyle where Self == PillButtonStyle {
-    static func pill(backgroundColor: Color = .accentColor, 
-                    foregroundColor: Color = .white) -> PillButtonStyle {
-        PillButtonStyle(backgroundColor: backgroundColor, foregroundColor: foregroundColor)
+    static func pill(
+        backgroundColor: Color = .accentColor, 
+        foregroundColor: Color = .white
+    ) -> PillButtonStyle {
+        PillButtonStyle(
+            backgroundColor: backgroundColor, 
+            foregroundColor: foregroundColor
+        )
     }
     
-    static func pillScale(backgroundColor: Color = .accentColor,
-                         foregroundColor: Color = .white,
-                         scaleAmount: CGFloat = 0.95) -> PillButtonStyle {
-        PillButtonStyle(backgroundColor: backgroundColor, 
-                       foregroundColor: foregroundColor,
-                       scaleAmount: scaleAmount)
+    static func pillScale(
+        backgroundColor: Color = .accentColor,
+        foregroundColor: Color = .white,
+        scaleAmount: CGFloat = 0.95
+    ) -> PillButtonStyle {
+        PillButtonStyle(
+            backgroundColor: backgroundColor, 
+            foregroundColor: foregroundColor,
+            scaleAmount: scaleAmount
+        )
     }
 }
 
@@ -75,6 +84,7 @@ extension ButtonStyle where Self == PillButtonStyle {
                 Image(systemName: "heart.fill")
                 Text("Favoritar")
             }
+            .font(.system(size: 18, weight: .semibold))
             .padding(.vertical, 4)
             .frame(maxWidth: .infinity)
         }

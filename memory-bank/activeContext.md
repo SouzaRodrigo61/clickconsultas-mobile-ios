@@ -33,6 +33,11 @@
    - Padrões de desenvolvimento estabelecidos
    - **Atualização**: Removido KMP, arquitetura puramente Swift
 
+4. **Design System Inicial**
+   - Gradiente radial implementado para autenticação
+   - Extensões de Color com suporte a hex
+   - Sistema de gradientes (Linear e Radial) configurado
+
 ### 🔄 Em Andamento
 1. **Estrutura de Módulos**
    - Definição da estrutura de pastas
@@ -76,9 +81,9 @@ clickconsultas-mobile-ios/
 ```
 
 ### 🎨 Design System
-- **Cores**: Ainda não definidas
+- **Cores**: Gradiente radial implementado (C4E6F3 → E3F3FA → FFFFFF)
 - **Tipografia**: Ainda não definida
-- **Componentes**: Ainda não criados
+- **Componentes**: Gradientes implementados (Linear e Radial)
 - **Ícones**: Ainda não selecionados
 
 ## Problemas e Desafios
