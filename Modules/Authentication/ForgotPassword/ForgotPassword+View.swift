@@ -18,9 +18,9 @@ extension ForgotPassword {
                     .ignoresSafeArea()
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Digite seu email para receber um codigo de recuperação de senha")
+                    Text("Digite seu email para receber um código de recuperação de senha")
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(.inputContainerTextFieldFill.opacity(0.4))
+                        .foregroundStyle(.inputContainerTextFieldFill.opacity(0.6))
                         .padding(.horizontal, 16)
                         .padding(.bottom, 24)
                     
@@ -77,7 +77,7 @@ extension ForgotPassword {
                     Spacer()
                     
                     Button {
-                        store.send(.resetPasswordTapped)
+                        store.send(.sendOTPTapped)
                     } label: {
                         HStack(alignment: .center) {
                             if store.isLoading {
@@ -86,7 +86,7 @@ extension ForgotPassword {
                             }
                             
                             if store.isLoading == false {
-                                Text("Enviar Email")
+                                Text("Enviar Código")
                                     .font(.system(size: 18, weight: .bold))
                             }
                         }
@@ -104,6 +104,10 @@ extension ForgotPassword {
             .onAppear {
                 store.send(.onAppear)
             }
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.otpCode, action: \.destination.otpCode), 
+                destination: OTPCode.ContentView.init(store:)
+            )
         }
     }
 }

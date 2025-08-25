@@ -45,6 +45,7 @@ extension Input {
         let returnKeyType: SubmitLabel
         let autocorrectionDisabled: Bool
         let autocapitalization: TextInputAutocapitalization
+        let isSecure: Bool
         let onSubmit: (() -> Void)?
         let backgroundColor: Color
         let shinyColor: Color
@@ -62,6 +63,7 @@ extension Input {
             returnKeyType: SubmitLabel = .done,
             autocorrectionDisabled: Bool = false,
             autocapitalization: TextInputAutocapitalization = .sentences,
+            isSecure: Bool = false,
             backgroundColor: Color = Color(.inputContainer).opacity(0.12),
             shinyColor: Color = Color.blue.opacity(0.03),
             verticalPadding: CGFloat = 14,
@@ -77,6 +79,7 @@ extension Input {
             self.returnKeyType = returnKeyType
             self.autocorrectionDisabled = autocorrectionDisabled
             self.autocapitalization = autocapitalization
+            self.isSecure = isSecure
             self.onSubmit = onSubmit
             self.backgroundColor = backgroundColor
             self.shinyColor = shinyColor
@@ -91,17 +94,23 @@ extension Input {
                 cornerRadius: 16
             ) {
                 HStack(alignment: .center) {
-                    TextField(placeholder, text: $text)
-                        .font(font)
-                        .foregroundStyle(textColor)
-                        .tint(cursorColor)
-                        .keyboardType(keyboardType)
-                        .submitLabel(returnKeyType)
-                        .autocorrectionDisabled(autocorrectionDisabled)
-                        .textInputAutocapitalization(autocapitalization)
-                        .onSubmit {
-                            onSubmit?()
+                    Group {
+                        if isSecure {
+                            SecureField(placeholder, text: $text)
+                        } else {
+                            TextField(placeholder, text: $text)
                         }
+                    }
+                    .font(font)
+                    .foregroundStyle(textColor)
+                    .tint(cursorColor)
+                    .keyboardType(keyboardType)
+                    .submitLabel(returnKeyType)
+                    .autocorrectionDisabled(autocorrectionDisabled)
+                    .textInputAutocapitalization(autocapitalization)
+                    .onSubmit {
+                        onSubmit?()
+                    }
                     
                     if showClearButton && !text.isEmpty {
                         Button { 
@@ -122,6 +131,7 @@ extension Input {
     struct PreviewScreen: View { 
         @State private var text1 = ""
         @State private var text2 = ""
+        @State private var password = ""
         
         var body: some View { 
             VStack(spacing: 16) {
@@ -135,6 +145,13 @@ extension Input {
                     placeholder: "Digite seu nome",
                     showClearButton: true,
                     text: $text2
+                )
+                
+                Input.Field(
+                    placeholder: "Digite sua senha",
+                    showClearButton: true,
+                    isSecure: true,
+                    text: $password
                 )
             }
             .padding(.horizontal)

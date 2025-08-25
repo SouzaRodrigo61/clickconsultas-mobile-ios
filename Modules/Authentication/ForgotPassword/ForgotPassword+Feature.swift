@@ -21,14 +21,17 @@ extension ForgotPassword {
             // Computed properties para badges
             var shouldShowEmailSuggestions: Bool = false
             var emailSuggestions: [String] = ["@gmail.com", "@hotmail.com", "@yahoo.com.br"]
+            
+            @Presents var destination: Destination.State?
         }
         
         enum Action: Equatable, BindableAction {
             case onAppear
-            case resetPasswordTapped
-            case resetPasswordSucceeded
-            case resetPasswordFailed(String)
+            case sendOTPTapped
+            case sendOTPSucceeded
+            case sendOTPFailed(String)
             case emailSuggestionTapped(String)
+            case destination(PresentationAction<Destination.Action>)
             case binding(BindingAction<State>)
         }
         
@@ -46,7 +49,7 @@ extension ForgotPassword {
                 case .onAppear:
                     return .none
                     
-                case .resetPasswordTapped:
+                case .sendOTPTapped:
                     state.isLoading = true
                     state.errorMessage = nil
                     state.successMessage = nil
@@ -54,15 +57,15 @@ extension ForgotPassword {
                     // TODO: Implementar chamada real para API
                     return .run { send in
                         try await Task.sleep(for: .seconds(1))
-                        await send(.resetPasswordSucceeded)
+                        await send(.sendOTPSucceeded)
                     }
                     
-                case .resetPasswordSucceeded:
+                case .sendOTPSucceeded:
                     state.isLoading = false
-                    state.successMessage = "Email de recuperação enviado com sucesso!"
+                    state.destination = .otpCode(OTPCode.Feature.State(email: state.email))
                     return .none
                     
-                case let .resetPasswordFailed(error):
+                case let .sendOTPFailed(error):
                     state.isLoading = false
                     state.errorMessage = error
                     return .none
@@ -74,11 +77,16 @@ extension ForgotPassword {
                     }
                     return .none
                     
+                case .destination:
+                    return .none
+                    
                 case .binding:
                     return .none
                 }
             }
-            ._printChanges()
+            .ifLet(\.$destination, action: \.destination) {
+                Destination()
+            }
         }
     }
 } 
