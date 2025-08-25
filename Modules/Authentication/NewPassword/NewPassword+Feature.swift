@@ -78,7 +78,12 @@ extension NewPassword {
                     
                 case .updatePasswordSucceeded:
                     state.isLoading = false
-                    state.destination = .success(Success.Feature.State())
+                    state.destination = .success(Success.Feature.State(
+                        title: "Senha Atualizada!",
+                        subtitle: "Sua senha foi atualizada com sucesso. Agora você pode fazer login com sua nova senha.",
+                        iconName: "checkmark.shield.fill",
+                        iconColor: .green
+                    ))
                     return .none
                     
                 case let .updatePasswordFailed(error):

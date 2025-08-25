@@ -13,7 +13,23 @@ extension Success {
     struct Feature {
         @ObservableState
         struct State: Equatable {
+            let title: String
+            let subtitle: String
+            let iconName: String
+            let iconColor: Color
             var isLoading: Bool = false
+            
+            init(
+                title: String = "Tudo pronto!",
+                subtitle: String = "Operação realizada com sucesso.",
+                iconName: String = "checkmark.circle.fill",
+                iconColor: Color = .blue
+            ) {
+                self.title = title
+                self.subtitle = subtitle
+                self.iconName = iconName
+                self.iconColor = iconColor
+            }
         }
         
         enum Action: Equatable {
