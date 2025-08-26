@@ -13,138 +13,82 @@ extension CreateAccount {
         @Bindable var store: StoreOf<Feature>
         
         var body: some View {
-            ZStack {
-                RadialGradient.authenticationBackground
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    VStack(spacing: 0) {
-                        Text("Criar Conta")
-                            .font(.system(size: 30, weight: .bold))
-                            .padding(.top, 32)
-                            .padding(.bottom, 36)
-                        
-                        Input.Title(
-                            title: "Nome",
-                            placeholder: "Digite seu nome completo",
-                            showClearButton: true,
-                            font: .system(size: 16, weight: .medium),
-                            textColor: .primary,
-                            cursorColor: .blue,
-                            keyboardType: .default,
-                            returnKeyType: .next,
-                            autocorrectionDisabled: false,
-                            autocapitalization: .words,
-                            text: Binding(
-                                get: { store.name },
-                                set: { store.send(.nameChanged($0)) }
-                            )
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 16)
-                        
-                        Input.Title(
-                            title: "Email",
-                            placeholder: "Digite seu email",
-                            showClearButton: true,
-                            font: .system(size: 16, weight: .medium),
-                            textColor: .primary,
-                            cursorColor: .blue,
-                            keyboardType: .emailAddress,
-                            returnKeyType: .next,
-                            autocorrectionDisabled: true,
-                            autocapitalization: .never,
-                            text: Binding(
-                                get: { store.email },
-                                set: { store.send(.emailChanged($0)) }
-                            )
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 16)
-                        
-                        Input.Title(
-                            title: "Senha",
-                            placeholder: "Digite sua senha",
-                            isSecure: !store.isPasswordVisible,
-                            showPasswordToggle: true,
-                            font: .system(size: 16, weight: .medium),
-                            textColor: .primary,
-                            cursorColor: .blue,
-                            keyboardType: .default,
-                            returnKeyType: .next,
-                            autocorrectionDisabled: true,
-                            autocapitalization: .never,
-                            text: Binding(
-                                get: { store.password },
-                                set: { store.send(.passwordChanged($0)) }
-                            ),
-                            onPasswordToggle: {
-                                store.send(.togglePasswordVisibility)
-                            }
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 16)
-                        
-                        Input.Title(
-                            title: "Confirmar Senha",
-                            placeholder: "Confirme sua senha",
-                            isSecure: !store.isConfirmPasswordVisible,
-                            showPasswordToggle: true,
-                            font: .system(size: 16, weight: .medium),
-                            textColor: .primary,
-                            cursorColor: .blue,
-                            keyboardType: .default,
-                            returnKeyType: .done,
-                            autocorrectionDisabled: true,
-                            autocapitalization: .never,
-                            text: Binding(
-                                get: { store.confirmPassword },
-                                set: { store.send(.confirmPasswordChanged($0)) }
-                            ),
-                            onPasswordToggle: {
-                                store.send(.toggleConfirmPasswordVisibility)
-                            }
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 16)
-                        
-                        if let errorMessage = store.errorMessage {
-                            Text(errorMessage)
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.red)
-                                .padding(.horizontal, 16)
-                                .padding(.bottom, 16)
-                        }
-                        
-                        Spacer(minLength: 32)
-                        
-                        Button {
-                            store.send(.createAccountTapped)
-                        } label: {
-                            HStack(alignment: .center) {
-                                if store.isLoading {
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                }
-                                
-                                if store.isLoading == false {
-                                    Text("Criar Conta")
-                                        .font(.system(size: 18, weight: .bold))
+            NavigationStack {
+                VStack(spacing: 0) {
+                    // Email Input
+                    Input.Field(
+                        placeholder: "Digite seu e-mail",
+                        showClearButton: true,
+                        font: .system(size: 16, weight: .medium),
+                        textColor: .primary,
+                        cursorColor: .blue,
+                        keyboardType: .emailAddress,
+                        returnKeyType: .done,
+                        autocorrectionDisabled: true,
+                        autocapitalization: .never,
+                        text: $store.email
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
+                    
+                    // Email Suggestions
+                    if store.shouldShowEmailSuggestions {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(store.emailSuggestions, id: \.self) { suggestion in
+                                    Button {
+                                        store.send(.emailSuggestionTapped(suggestion))
+                                    } label: { 
+                                        Text(suggestion)
+                                            .font(.system(size: 12, weight: .medium))
+                                    }
+                                    .buttonStyle(.chip(backgroundColor: .inputContainer.opacity(0.12), foregroundColor: .inputContainerTextFieldFill))
                                 }
                             }
-                            .padding(.vertical, 4)
-                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 16)
                         }
-                        .buttonStyle(.pill(backgroundColor: store.isLoading ? .primaryButton.opacity(0.65) : .primaryButton))
-                        .disabled(store.isLoading)
-                        .padding(.horizontal, 16)
                         .padding(.bottom, 16)
                     }
+                    
+                    // Error Message
+                    if let errorMessage = store.errorMessage {
+                        Text(errorMessage)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.red)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 16)
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        store.send(.continueTapped)
+                    } label: {
+                        HStack(alignment: .center) {
+                            Text("Continuar")
+                                .font(.system(size: 18, weight: .bold))
+                        }
+                        .padding(.vertical, 4)
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.pill(backgroundColor: store.email.isEmpty || !store.email.contains("@") ? .primaryButton.opacity(0.65) : .primaryButton))
+                    .disabled(store.email.isEmpty || !store.email.contains("@"))
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
                 }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                store.send(.onAppear)
+                .background(
+                    RadialGradient.authenticationBackground
+                        .ignoresSafeArea()
+                )
+                .navigationTitle("E-mail")
+                .navigationBarTitleDisplayMode(.large)
+                .onAppear {
+                    store.send(.onAppear)
+                }
+                .navigationDestination(
+                    item: $store.scope(state: \.destination?.cpf, action: \.destination.cpf),
+                    destination: CPF.ContentView.init(store:)
+                )
             }
         }
     }

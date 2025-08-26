@@ -14,6 +14,10 @@ extension NewPassword {
         @ObservableState
         struct State: Equatable {
             let email: String
+            var cpf: String = ""
+            var firstName: String = ""
+            var lastName: String = ""
+            var phone: String = ""
             var newPassword: String = ""
             var confirmPassword: String = ""
             var isNewPasswordVisible: Bool = false
@@ -29,6 +33,11 @@ extension NewPassword {
                 !confirmPassword.isEmpty && 
                 newPassword == confirmPassword && 
                 passwordStrength != .weak
+            }
+            
+            // Verificar se é parte do fluxo de criação de conta
+            var isCreateAccountFlow: Bool {
+                !cpf.isEmpty && !firstName.isEmpty && !lastName.isEmpty && !phone.isEmpty
             }
         }
         
@@ -68,7 +77,19 @@ extension NewPassword {
                 case .updatePasswordTapped:
                     guard state.canUpdatePassword else { return .none }
                     
-                    // Apenas validar - o ForgotPassword vai processar
+                    if state.isCreateAccountFlow {
+                        // Navegar para Term no fluxo de criação
+                        state.destination = .term(Term.Feature.State(
+                            email: state.email,
+                            cpf: state.cpf,
+                            firstName: state.firstName,
+                            lastName: state.lastName,
+                            phone: state.phone,
+                            password: state.newPassword
+                        ))
+                    } else {
+                        // Apenas validar - o ForgotPassword vai processar
+                    }
                     return .none
                     
                 case .passwordUpdateSucceeded:

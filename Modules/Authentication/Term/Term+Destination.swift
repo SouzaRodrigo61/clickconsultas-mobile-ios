@@ -1,5 +1,5 @@
 //
-//  NewPassword+Destination.swift
+//  Term+Destination.swift
 //  ClickConsultasMobileIOS
 //
 //  Created by Rodrigo Souza on 25/08/2025.
@@ -7,26 +7,21 @@
 
 import ComposableArchitecture
 
-extension NewPassword {
+extension Term {
     @Reducer
     struct Destination {
         @ObservableState
         enum State: Equatable {
             case success(Success.Feature.State)
-            case term(Term.Feature.State)
         }
         
         enum Action: Equatable {
             case success(Success.Feature.Action)
-            case term(Term.Feature.Action)
         }
         
         var body: some ReducerOf<Self> {
             Scope(state: \.success, action: \.success) {
                 Success.Feature()
-            }
-            Scope(state: \.term, action: \.term) {
-                Term.Feature()
             }
         }
     }

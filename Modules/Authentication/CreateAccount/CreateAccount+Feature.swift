@@ -13,79 +13,73 @@ extension CreateAccount {
     struct Feature {
         @ObservableState
         struct State: Equatable {
-            var name: String = ""
             var email: String = ""
-            var password: String = ""
-            var confirmPassword: String = ""
-            var isPasswordVisible: Bool = false
-            var isConfirmPasswordVisible: Bool = false
             var isLoading: Bool = false
             var errorMessage: String?
+            
+            // Computed properties para badges
+            var shouldShowEmailSuggestions: Bool = false
+            var emailSuggestions: [String] = ["@gmail.com", "@hotmail.com", "@yahoo.com.br"]
+            
+            @Presents var destination: Destination.State?
         }
         
-        enum Action: Equatable {
+        enum Action: Equatable, BindableAction {
             case onAppear
-            case nameChanged(String)
-            case emailChanged(String)
-            case passwordChanged(String)
-            case confirmPasswordChanged(String)
-            case togglePasswordVisibility
-            case toggleConfirmPasswordVisibility
-            case createAccountTapped
-            case createAccountSucceeded
-            case createAccountFailed(String)
+            case emailSuggestionTapped(String)
+            case continueTapped
+            case destination(PresentationAction<Destination.Action>)
+            case binding(BindingAction<State>)
         }
         
         var body: some ReducerOf<Self> {
+            BindingReducer()
+                .onChange(of: \.email) { _, email in
+                    Reduce { state, _ in
+                        state.shouldShowEmailSuggestions = email.contains("@")
+                        return .none
+                    }
+                }
+            
             Reduce { state, action in
                 switch action {
                 case .onAppear:
                     return .none
                     
-                case let .nameChanged(name):
-                    state.name = name
+                case let .emailSuggestionTapped(suggestion):
+                    if let atIndex = state.email.lastIndex(of: "@") {
+                        let baseEmail = String(state.email[..<atIndex])
+                        state.email = baseEmail + suggestion
+                    }
                     return .none
                     
-                case let .emailChanged(email):
-                    state.email = email
-                    return .none
-                    
-                case let .passwordChanged(password):
-                    state.password = password
-                    return .none
-                    
-                case let .confirmPasswordChanged(confirmPassword):
-                    state.confirmPassword = confirmPassword
-                    return .none
-                    
-                case .togglePasswordVisibility:
-                    state.isPasswordVisible.toggle()
-                    return .none
-                    
-                case .toggleConfirmPasswordVisibility:
-                    state.isConfirmPasswordVisible.toggle()
-                    return .none
-                    
-                case .createAccountTapped:
-                    state.isLoading = true
-                    state.errorMessage = nil
-                    
-                    // TODO: Implementar chamada real para API
-                    return .run { send in
-                        try await Task.sleep(for: .seconds(1))
-                        await send(.createAccountSucceeded)
+                case .continueTapped:
+                    // Validar email antes de continuar
+                    guard !state.email.isEmpty && state.email.contains("@") else {
+                        state.errorMessage = "Por favor, insira um email válido"
+                        return .none
                     }
                     
-                case .createAccountSucceeded:
-                    state.isLoading = false
+                    state.errorMessage = nil
+                    state.destination = .cpf(CPF.Feature.State(email: state.email))
                     return .none
                     
-                case let .createAccountFailed(error):
-                    state.isLoading = false
-                    state.errorMessage = error
+                case .destination(.presented(.cpf(.destination(.presented(.documents(.destination(.presented(.phone(.destination(.presented(.newPassword(.destination(.presented(.term(.destination(.presented(.success(.finishFlow)))))))))))))))))):
+                    // Fluxo completo finalizado com sucesso
+                    state.destination = nil
+                    return .none
+                    
+                case .destination:
+                    return .none
+                    
+                case .binding:
                     return .none
                 }
             }
+            .ifLet(\.$destination, action: \.destination) {
+                Destination()
+            }
+            ._printChanges()
         }
     }
 } 
