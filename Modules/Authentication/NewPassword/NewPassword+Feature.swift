@@ -46,6 +46,7 @@ extension NewPassword {
             case toggleNewPasswordVisibility
             case toggleConfirmPasswordVisibility
             case updatePasswordTapped
+            case goToTerm
             case passwordUpdateSucceeded
             case passwordUpdateFailed(String)
             case destination(PresentationAction<Destination.Action>)
@@ -75,21 +76,17 @@ extension NewPassword {
                     return .none
                     
                 case .updatePasswordTapped:
-                    guard state.canUpdatePassword else { return .none }
+                    return .none
                     
-                    if state.isCreateAccountFlow {
-                        // Navegar para Term no fluxo de criação
-                        state.destination = .term(Term.Feature.State(
-                            email: state.email,
-                            cpf: state.cpf,
-                            firstName: state.firstName,
-                            lastName: state.lastName,
-                            phone: state.phone,
-                            password: state.newPassword
-                        ))
-                    } else {
-                        // Apenas validar - o ForgotPassword vai processar
-                    }
+                case .goToTerm:
+                    state.destination = .term(Term.Feature.State(
+                        email: state.email,
+                        cpf: state.cpf,
+                        firstName: state.firstName,
+                        lastName: state.lastName,
+                        phone: state.phone,
+                        password: state.newPassword
+                    ))
                     return .none
                     
                 case .passwordUpdateSucceeded:

@@ -90,6 +90,11 @@ extension Authentication {
                     state.destination = nil
                     return .none
                     
+                case .destination(.presented(.createAccount(.destination(.presented(.cpf(.destination(.presented(.documents(.destination(.presented(.phone(.destination(.presented(.newPassword(.destination(.presented(.term(.destination(.presented(.success(.finishFlow))))))))))))))))))))):
+                    // Fluxo completo finalizado com sucesso
+                    state.destination = nil
+                    return .none  
+                    
                 case .destination:
                     return .none
                 }

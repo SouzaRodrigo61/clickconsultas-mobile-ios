@@ -63,11 +63,10 @@ extension CreateAccount {
                     state.errorMessage = nil
                     state.destination = .cpf(CPF.Feature.State(email: state.email))
                     return .none
-                    
-                case .destination(.presented(.cpf(.destination(.presented(.documents(.destination(.presented(.phone(.destination(.presented(.newPassword(.destination(.presented(.term(.destination(.presented(.success(.finishFlow)))))))))))))))))):
-                    // Fluxo completo finalizado com sucesso
-                    state.destination = nil
-                    return .none
+
+                case .destination(.presented(.cpf(.destination(.presented(.documents(.destination(.presented(.phone(.destination(.presented(.newPassword(.updatePasswordTapped)))))))))))):
+                    // Propagar a ação updatePasswordTapped para NewPassword navegar para Term
+                    return .send(.destination(.presented(.cpf(.destination(.presented(.documents(.destination(.presented(.phone(.destination(.presented(.newPassword(.goToTerm)))))))))))))
                     
                 case .destination:
                     return .none
