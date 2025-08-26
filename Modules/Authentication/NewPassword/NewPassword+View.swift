@@ -133,10 +133,13 @@ extension NewPassword {
             .onAppear {
                 store.send(.onAppear)
             }
-            
             .navigationDestination(
                 item: $store.scope(state: \.destination?.success, action: \.destination.success), 
                 destination: Success.ContentView.init(store:)
+            )
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.term, action: \.destination.term), 
+                destination: Term.ContentView.init(store:)
             )
         }
         
